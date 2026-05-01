@@ -1,7 +1,7 @@
 {
-  "name": "Aşkımız",
-  "short_name": "Aşkımız",
-  "description": "Ana ekrana eklenebilen romantik hatıra uygulaması",
+  "name": "Sevgilime",
+  "short_name": "Sevgilime",
+  "description": "Sevgilim için özel hatıra uygulaması",
   "lang": "tr",
   "start_url": "./index.html",
   "scope": "./",
