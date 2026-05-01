@@ -1282,10 +1282,8 @@ body.standalone .install-banner { display: none !important; }
 
             var card = document.createElement('div');
             card.className = 'memory-card';
-            var deleteHtml = '';
-            if (i >= defaultMemories.length) {
-                deleteHtml = '<button class="delete-btn" data-mem-idx="' + (i - defaultMemories.length) + '">🗑️</button>';
-            }
+            var isCustom = i >= defaultMemories.length;
+            var deleteHtml = '<button class="delete-btn" data-mem-idx="' + i + '" data-is-custom="' + (isCustom ? '1' : '0') + '">🗑️</button>';
             card.innerHTML =
                 '<div class="memory-date"><span>📅 ' + escapeHtml(m.date) + '</span>' + deleteHtml + '</div>' +
                 '<div class="memory-text">' + escapeHtml(m.text) + '</div>';
@@ -1297,8 +1295,14 @@ body.standalone .install-banner { display: none !important; }
             (function(b) {
                 addTap(b, function() {
                     var idx = parseInt(b.getAttribute('data-mem-idx'));
-                    customMemories.splice(idx, 1);
-                    saveData('memories', customMemories);
+                    var isCustom = b.getAttribute('data-is-custom') === '1';
+                    if (isCustom) {
+                        var customIdx = idx - defaultMemories.length;
+                        customMemories.splice(customIdx, 1);
+                        saveData('memories', customMemories);
+                    } else {
+                        defaultMemories.splice(idx, 1);
+                    }
                     allMemories = defaultMemories.concat(customMemories);
                     renderMemories();
                     showNotification('🗑️ Anı silindi');
