@@ -1,5 +1,5 @@
-/* Aşkımız PWA - Service Worker v2 */
-var CACHE_NAME = 'askimiz-pwa-v2';
+/* Aşkımız PWA - Service Worker v3 (Zorunlu Güncelleme) */
+var CACHE_NAME = 'askimiz-pwa-v3';
 var APP_SHELL = [
   './',
   './index.html',
@@ -19,8 +19,6 @@ self.addEventListener('install', function(event) {
       return cache.addAll(APP_SHELL);
     }).then(function() {
       return self.skipWaiting();
-    }).catch(function(err) {
-      console.warn('SW install error:', err);
     })
   );
 });
@@ -47,26 +45,19 @@ self.addEventListener('message', function(event) {
 self.addEventListener('fetch', function(event) {
   var request = event.request;
   if (request.method !== 'GET') return;
-
   var url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
   if (request.mode === 'navigate') {
     event.respondWith(
       fetch(request).then(function(response) {
-        if (response && response.status === 200) {
-          var clone = response.clone();
-          caches.open(CACHE_NAME).then(function(cache) {
-            cache.put('./index.html', clone);
-          });
-        }
+        var clone = response.clone();
+        caches.open(CACHE_NAME).then(function(cache) {
+          cache.put('./index.html', clone);
+        });
         return response;
       }).catch(function() {
-        return caches.match('./index.html').then(function(cached) {
-          return cached || new Response('Cevrimdisi moddasin.', {
-            headers: { 'Content-Type': 'text/plain; charset=utf-8' }
-          });
-        });
+        return caches.match('./index.html');
       })
     );
     return;
@@ -74,16 +65,13 @@ self.addEventListener('fetch', function(event) {
 
   event.respondWith(
     caches.match(request).then(function(cached) {
-      if (cached) return cached;
-      return fetch(request).then(function(response) {
-        if (!response || response.status !== 200 || response.type === 'opaque') return response;
+      return cached || fetch(request).then(function(response) {
+        if (!response || response.status !== 200) return response;
         var clone = response.clone();
         caches.open(CACHE_NAME).then(function(cache) {
           cache.put(request, clone);
         });
         return response;
-      }).catch(function() {
-        return caches.match('./index.html');
       });
     })
   );
