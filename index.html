@@ -1,0 +1,2152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Aşkımız">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#ff6b9d">
+<meta name="application-name" content="Aşkımız">
+<meta name="description" content="Ana ekrana eklenebilen romantik hatıra uygulaması">
+<meta name="color-scheme" content="light">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
+<link rel="mask-icon" href="icons/safari-pinned-tab.svg" color="#e91e63">
+<title>Aşkımız 💕</title>
+
+<style>
+* {
+    margin: 0; padding: 0; box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+input, textarea, select {
+    -webkit-user-select: text; user-select: text;
+    -webkit-appearance: none; appearance: none;
+    border-radius: 0; font-size: 16px;
+}
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    height: 100%;
+    /* iOS Safari uyumlu yükseklik */
+    height: -webkit-fill-available;
+}
+:root {
+    --p: #e91e63; --pl: #ff6b9d; --pd: #c2185b;
+    --bg: linear-gradient(135deg, #ff9a9e 0%, #fecfef 30%, #ffecd2 70%, #fcb69f 100%);
+    --g: rgba(255, 255, 255, 0.85);
+    --s: 0 8px 32px rgba(233, 30, 99, 0.15);
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
+    /* Fallback zinciri: dvh → fill-available → vh */
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+    min-height: 100dvh;
+    padding-top: var(--safe-top);
+    padding-bottom: calc(90px + var(--safe-bottom));
+    padding-left: var(--safe-left); padding-right: var(--safe-right);
+    overflow-x: hidden; position: relative;
+    -webkit-font-smoothing: antialiased;
+    background: transparent;
+    /* iOS overscroll bounce'u önle */
+    overscroll-behavior-y: none;
+}
+body::before {
+    content: ''; position: fixed; inset: 0;
+    background: var(--bg); z-index: -1; pointer-events: none;
+}
+button, .nav-item, .week-header, .gallery-item, .task-card,
+.add-memory-btn, .diary-btn, .surprise-btn, .backup-btn,
+.delete-btn, .delete-photo, .modal-btn, .love-heart {
+    touch-action: manipulation;
+    cursor: pointer;
+}
+.particles {
+    position: fixed; inset: 0; width: 100%;
+    height: 100vh;
+    height: -webkit-fill-available;
+    height: 100dvh;
+    pointer-events: none; z-index: 0; overflow: hidden;
+}
+.particle {
+    position: absolute; font-size: 20px;
+    -webkit-animation: float 15s infinite ease-in-out;
+    animation: float 15s infinite ease-in-out;
+    opacity: 0.6; will-change: transform, opacity;
+}
+@-webkit-keyframes float {
+    0%, 100% { -webkit-transform: translate3d(0, 100vh, 0) rotate(0deg); transform: translate3d(0, 100vh, 0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.6; } 90% { opacity: 0.6; }
+    100% { -webkit-transform: translate3d(0, -100vh, 0) rotate(720deg); transform: translate3d(0, -100vh, 0) rotate(720deg); opacity: 0; }
+}
+@keyframes float {
+    0%, 100% { transform: translate3d(0, 100vh, 0) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.6; } 90% { opacity: 0.6; }
+    100% { transform: translate3d(0, -100vh, 0) rotate(720deg); opacity: 0; }
+}
+.container { position: relative; z-index: 1; max-width: 500px; margin: 0 auto; padding: 15px; }
+.counter-section {
+    background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 24px; padding: 25px 20px; margin-bottom: 20px;
+    box-shadow: var(--s); text-align: center; border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.profile-hero {
+    background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 28px; padding: 22px 20px; margin-bottom: 20px;
+    box-shadow: var(--s); border: 1px solid rgba(255, 255, 255, 0.55);
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center; gap: 16px;
+}
+.profile-avatar {
+    width: 86px; height: 86px; border-radius: 50%; -webkit-flex-shrink: 0; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--p), var(--pl), #ffb199);
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    color: white; font-size: 2.2em; font-weight: 800; cursor: pointer;
+    overflow: hidden; box-shadow: 0 10px 30px rgba(233, 30, 99, 0.25);
+    border: 3px solid rgba(255, 255, 255, 0.9);
+}
+.profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.profile-meta { -webkit-flex: 1; flex: 1; min-width: 0; }
+.profile-kicker {
+    font-size: 0.78em; color: #a05; font-weight: 700; letter-spacing: 1.5px;
+    text-transform: uppercase; margin-bottom: 6px;
+}
+.profile-name {
+    font-size: 1.45em; font-weight: 800; color: var(--pd); margin-bottom: 6px;
+}
+.profile-note { font-size: 0.92em; color: #666; line-height: 1.5; }
+.profile-actions {
+    display: -webkit-flex; display: flex; gap: 10px; margin-top: 12px;
+    -webkit-flex-wrap: wrap; flex-wrap: wrap;
+}
+.profile-btn {
+    border: none; border-radius: 999px; padding: 10px 14px; cursor: pointer;
+    font-family: inherit; font-weight: 700; font-size: 0.84em;
+}
+.profile-btn.primary { background: linear-gradient(135deg, var(--p), var(--pl)); color: white; }
+.profile-btn.secondary { background: rgba(255,255,255,0.9); color: var(--pd); border: 1px solid rgba(233, 30, 99, 0.15); }
+.counter-title { font-size: 0.9em; color: #888; text-transform: uppercase; letter-spacing: 3px; margin-bottom: 8px; }
+.counter-main {
+    font-size: 3.2em; font-weight: 800;
+    background: linear-gradient(135deg, var(--p), var(--pl));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; line-height: 1.1;
+}
+.counter-label { font-size: 1em; color: #666; margin-top: 5px; }
+.counter-details {
+    display: -webkit-flex; display: flex;
+    -webkit-justify-content: center; justify-content: center;
+    gap: 10px; margin-top: 15px;
+    -webkit-flex-wrap: wrap; flex-wrap: wrap;
+}
+.counter-detail {
+    background: linear-gradient(135deg, rgba(233, 30, 99, 0.1), rgba(255, 107, 157, 0.1));
+    padding: 8px 15px; border-radius: 20px; font-size: 0.85em;
+    color: var(--pd); font-weight: 600;
+}
+.meet-date { margin-top: 12px; font-size: 0.8em; color: #999; }
+.heartbeat { display: inline-block; -webkit-animation: heartbeat 1.2s infinite; animation: heartbeat 1.2s infinite; will-change: transform; }
+@-webkit-keyframes heartbeat {
+    0%, 100% { -webkit-transform: scale(1); transform: scale(1); }
+    14% { -webkit-transform: scale(1.15); transform: scale(1.15); }
+    28% { -webkit-transform: scale(1); transform: scale(1); }
+    42% { -webkit-transform: scale(1.15); transform: scale(1.15); }
+}
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); } 14% { transform: scale(1.15); }
+    28% { transform: scale(1); } 42% { transform: scale(1.15); }
+}
+.daily-message {
+    background: linear-gradient(135deg, rgba(233, 30, 99, 0.9), rgba(255, 107, 157, 0.9));
+    border-radius: 24px; padding: 25px 20px; margin-bottom: 20px;
+    box-shadow: var(--s); color: white; text-align: center;
+    position: relative; overflow: hidden;
+}
+.daily-message::before {
+    content: ''; position: absolute; top: -50%; right: -50%;
+    width: 200%; height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    -webkit-animation: shimmer 3s infinite; animation: shimmer 3s infinite;
+}
+@-webkit-keyframes shimmer { 0%, 100% { -webkit-transform: rotate(0deg); } 50% { -webkit-transform: rotate(180deg); } }
+@keyframes shimmer { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(180deg); } }
+.daily-label { font-size: 0.8em; opacity: 0.9; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; position: relative; }
+.daily-text { font-size: 1.15em; line-height: 1.6; font-weight: 500; position: relative; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+.section-header {
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: space-between; justify-content: space-between;
+    margin-bottom: 15px; padding: 0 5px;
+}
+.section-title { font-size: 1.2em; font-weight: 700; color: var(--pd); }
+.section-badge { background: var(--p); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75em; font-weight: 600; }
+.week-card {
+    background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 20px; margin-bottom: 12px; box-shadow: var(--s);
+    overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.5);
+    -webkit-transition: -webkit-transform 0.3s; transition: transform 0.3s;
+}
+.week-card.tapped { -webkit-transform: scale(0.98); transform: scale(0.98); }
+.week-header {
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: space-between; justify-content: space-between;
+    padding: 18px 20px; cursor: pointer;
+}
+.week-info {
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    gap: 12px; -webkit-flex: 1; flex: 1; min-width: 0;
+}
+.week-number {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    font-weight: 700; font-size: 0.9em; -webkit-flex-shrink: 0; flex-shrink: 0;
+}
+.week-number.locked { background: #eee; color: #bbb; }
+.week-number.unlocked { background: linear-gradient(135deg, var(--p), var(--pl)); color: white; box-shadow: 0 4px 15px rgba(233, 30, 99, 0.3); }
+.week-number.current { background: linear-gradient(135deg, #ff9800, #ff5722); color: white; -webkit-animation: pulse 2s infinite; animation: pulse 2s infinite; }
+@-webkit-keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
+}
+@keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(255, 152, 0, 0.4); }
+    50% { box-shadow: 0 0 0 10px rgba(255, 152, 0, 0); }
+}
+.week-title-text { font-weight: 600; color: #333; font-size: 0.95em; }
+.week-status { font-size: 1.3em; -webkit-transition: -webkit-transform 0.3s; transition: transform 0.3s; -webkit-flex-shrink: 0; flex-shrink: 0; }
+.week-status.open { -webkit-transform: rotate(180deg); transform: rotate(180deg); }
+.week-content { max-height: 0; overflow: hidden; -webkit-transition: max-height 0.5s ease-out, padding 0.3s; transition: max-height 0.5s ease-out, padding 0.3s; }
+.week-content.open { max-height: 1000px; padding: 0 20px 20px; }
+.week-note-text {
+    background: linear-gradient(135deg, rgba(233, 30, 99, 0.05), rgba(255, 107, 157, 0.05));
+    border-radius: 16px; padding: 20px; font-size: 1em; line-height: 1.7;
+    color: #444; border-left: 4px solid var(--pl);
+    -webkit-user-select: text; user-select: text;
+}
+.special-badge {
+    display: inline-block; background: linear-gradient(135deg, #ff9800, #ff5722);
+    color: white; padding: 3px 10px; border-radius: 12px;
+    font-size: 0.7em; font-weight: 700; margin-left: 8px; vertical-align: middle;
+}
+.progress-section {
+    background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 20px; padding: 20px; margin-bottom: 20px;
+    box-shadow: var(--s); border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.progress-header {
+    display: -webkit-flex; display: flex;
+    -webkit-justify-content: space-between; justify-content: space-between;
+    margin-bottom: 10px; font-size: 0.85em; color: #666;
+}
+.progress-bar { width: 100%; height: 10px; background: #eee; border-radius: 5px; overflow: hidden; }
+.progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--p), var(--pl), #ff9800);
+    border-radius: 5px; -webkit-transition: width 1s ease; transition: width 1s ease; position: relative;
+}
+.gallery-grid {
+    display: -webkit-flex; display: flex;
+    -webkit-flex-wrap: wrap; flex-wrap: wrap;
+    gap: 12px; padding: 5px;
+}
+.gallery-item {
+    width: calc(50% - 6px);
+    /* aspect-ratio iOS 15+ destekler, fallback olarak padding-top kullan */
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--pl), #ffecd2);
+    border-radius: 20px;
+    display: -webkit-flex; display: flex;
+    -webkit-flex-direction: column; flex-direction: column;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    box-shadow: var(--s); border: 2px dashed rgba(255, 255, 255, 0.6);
+    cursor: pointer; -webkit-transition: -webkit-transform 0.3s; transition: transform 0.3s;
+    min-height: 180px;
+}
+.gallery-item::before {
+    content: '';
+    display: block;
+    padding-top: 133%; /* 3:4 oran */
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    pointer-events: none;
+}
+.gallery-item.tapped { -webkit-transform: scale(0.95); transform: scale(0.95); }
+.gallery-item.has-photo { border: 2px solid rgba(255, 255, 255, 0.8); }
+.gallery-item img {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    object-fit: cover; pointer-events: none;
+}
+.gallery-item .label {
+    position: absolute; bottom: 10px; left: 10px; right: 10px; z-index: 2;
+    font-size: 0.8em; color: var(--pd);
+    font-weight: 600; text-align: center; padding: 6px 10px;
+    background: rgba(255, 255, 255, 0.9); border-radius: 12px;
+}
+.gallery-item .placeholder { font-size: 3em; margin-bottom: 8px; z-index: 2; position: relative; }
+.gallery-item .delete-photo {
+    position: absolute; top: 8px; right: 8px; z-index: 3;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9); border: none; font-size: 0.9em;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    cursor: pointer;
+}
+.love-meter {
+    background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 24px; padding: 25px 20px; margin-bottom: 20px;
+    box-shadow: var(--s); text-align: center; border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.love-meter-title { font-size: 1em; color: #888; margin-bottom: 15px; }
+.love-hearts {
+    display: -webkit-flex; display: flex;
+    -webkit-justify-content: center; justify-content: center;
+    gap: 8px; margin-bottom: 15px;
+}
+.love-heart { font-size: 2em; -webkit-transition: -webkit-transform 0.3s; transition: transform 0.3s; cursor: pointer; display: inline-block; }
+.love-heart.tapped { -webkit-transform: scale(1.3); transform: scale(1.3); }
+.love-text { font-size: 1.1em; color: var(--pd); font-weight: 600; }
+.bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    display: -webkit-flex; display: flex;
+    -webkit-justify-content: space-around; justify-content: space-around;
+    padding: 12px 0; padding-bottom: calc(12px + var(--safe-bottom));
+    box-shadow: 0 -5px 30px rgba(0, 0, 0, 0.1);
+    z-index: 100; border-top: 1px solid rgba(0, 0, 0, 0.05);
+    -webkit-transition: -webkit-transform 0.25s ease; transition: transform 0.25s ease;
+}
+body.keyboard-open .bottom-nav { -webkit-transform: translateY(120%); transform: translateY(120%); }
+.nav-item {
+    display: -webkit-flex; display: flex;
+    -webkit-flex-direction: column; flex-direction: column;
+    -webkit-align-items: center; align-items: center;
+    gap: 4px; cursor: pointer; padding: 5px 10px; border-radius: 16px;
+    -webkit-transition: all 0.3s; transition: all 0.3s;
+    min-width: 0; -webkit-flex: 1; flex: 1;
+}
+.nav-item.active { background: linear-gradient(135deg, rgba(233, 30, 99, 0.1), rgba(255, 107, 157, 0.1)); }
+.nav-item .icon { font-size: 1.5em; -webkit-transition: -webkit-transform 0.3s; transition: transform 0.3s; }
+.nav-item.active .icon { -webkit-transform: translateY(-3px); transform: translateY(-3px); }
+.nav-item .label { font-size: 0.65em; color: #888; font-weight: 600; white-space: nowrap; }
+.nav-item.active .label { color: var(--p); }
+.page { display: none; -webkit-animation: fadeIn 0.4s; animation: fadeIn 0.4s; }
+.page.active { display: block; }
+@-webkit-keyframes fadeIn { from { opacity: 0; -webkit-transform: translateY(20px); transform: translateY(20px); } to { opacity: 1; -webkit-transform: translateY(0); transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.memory-card {
+    background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 20px; padding: 20px; margin-bottom: 15px;
+    box-shadow: var(--s); border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.memory-date {
+    font-size: 0.8em; color: var(--p); font-weight: 700; margin-bottom: 8px;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: space-between; justify-content: space-between;
+}
+.memory-text { font-size: 0.95em; color: #444; line-height: 1.6; -webkit-user-select: text; user-select: text; }
+.surprise-btn {
+    background: linear-gradient(135deg, var(--p), var(--pl));
+    color: white; border: none; padding: 16px 40px; border-radius: 30px;
+    font-size: 1.1em; font-weight: 700; cursor: pointer;
+    box-shadow: 0 8px 30px rgba(233, 30, 99, 0.3);
+    display: block; margin: 20px auto; width: 90%; max-width: 300px;
+    font-family: inherit;
+}
+.surprise-btn.tapped { -webkit-transform: scale(0.95); transform: scale(0.95); }
+.confetti { position: fixed; pointer-events: none; z-index: 9999; -webkit-animation: confetti-fall 3s ease-out forwards; animation: confetti-fall 3s ease-out forwards; }
+@-webkit-keyframes confetti-fall {
+    0% { -webkit-transform: translate3d(0, -100px, 0) rotate(0deg); transform: translate3d(0, -100px, 0) rotate(0deg); opacity: 1; }
+    100% { -webkit-transform: translate3d(0, 100vh, 0) rotate(720deg); transform: translate3d(0, 100vh, 0) rotate(720deg); opacity: 0; }
+}
+@keyframes confetti-fall {
+    0% { transform: translate3d(0, -100px, 0) rotate(0deg); opacity: 1; }
+    100% { transform: translate3d(0, 100vh, 0) rotate(720deg); opacity: 0; }
+}
+.notification {
+    position: fixed; top: calc(20px + var(--safe-top)); left: 50%;
+    -webkit-transform: translateX(-50%) translateY(-200px); transform: translateX(-50%) translateY(-200px);
+    background: var(--p); color: white; padding: 15px 30px;
+    border-radius: 30px; font-weight: 700;
+    box-shadow: 0 10px 40px rgba(233, 30, 99, 0.3);
+    z-index: 10000; -webkit-transition: -webkit-transform 0.5s; transition: transform 0.5s;
+    text-align: center; max-width: 90%;
+}
+.notification.show { -webkit-transform: translateX(-50%) translateY(0); transform: translateX(-50%) translateY(0); }
+.add-memory-btn {
+    background: linear-gradient(135deg, var(--p), var(--pl));
+    color: white; border: none; padding: 12px 30px; border-radius: 20px;
+    font-size: 0.95em; font-weight: 600; cursor: pointer;
+    box-shadow: var(--s);
+    display: -webkit-inline-flex; display: inline-flex;
+    -webkit-align-items: center; align-items: center;
+    gap: 8px; margin-bottom: 15px; font-family: inherit;
+}
+.add-memory-btn.tapped { -webkit-transform: scale(0.95); transform: scale(0.95); }
+.memory-input {
+    background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 16px; padding: 15px; margin-bottom: 15px;
+    box-shadow: var(--s); border: 1px solid rgba(255, 255, 255, 0.5); display: none;
+}
+.memory-input.open { display: block; -webkit-animation: fadeIn 0.3s; animation: fadeIn 0.3s; }
+.memory-input input, .memory-input textarea {
+    width: 100%; border: 2px solid var(--pl); border-radius: 12px;
+    padding: 12px 15px; font-size: 16px; margin-bottom: 10px;
+    background: white; font-family: inherit; color: #333;
+}
+.memory-input input:focus, .memory-input textarea:focus { outline: none; border-color: var(--p); }
+.memory-input textarea { min-height: 80px; resize: vertical; }
+.memory-input .btn-group { display: -webkit-flex; display: flex; gap: 10px; }
+.memory-input button {
+    -webkit-flex: 1; flex: 1; padding: 12px; border-radius: 12px; border: none;
+    font-weight: 600; cursor: pointer; font-size: 0.95em; font-family: inherit;
+}
+.memory-input .save-btn { background: linear-gradient(135deg, var(--p), var(--pl)); color: white; }
+.memory-input .cancel-btn { background: #eee; color: #666; }
+.diary-section {
+    background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 24px; padding: 25px 20px; margin-bottom: 20px;
+    box-shadow: var(--s); border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.diary-lock {
+    background: linear-gradient(135deg, rgba(233, 30, 99, 0.08), rgba(255, 107, 157, 0.08));
+    border: 2px dashed rgba(233, 30, 99, 0.25); border-radius: 20px; padding: 18px;
+}
+.diary-lock.hidden { display: none; }
+.diary-pass-row { display: -webkit-flex; display: flex; gap: 10px; margin-top: 12px; }
+.diary-pass-input, .diary-search {
+    -webkit-flex: 1; flex: 1; border: 2px solid var(--pl); border-radius: 14px; padding: 12px 14px;
+    font-size: 16px; background: white; color: #333; font-family: inherit;
+}
+.diary-pass-input:focus, .diary-search:focus, .diary-input:focus { outline: none; border-color: var(--p); }
+.diary-protected { display: none; }
+.diary-protected.open { display: block; -webkit-animation: fadeIn 0.3s; animation: fadeIn 0.3s; }
+.diary-toolbar {
+    display: -webkit-flex; display: flex; gap: 10px;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: space-between; justify-content: space-between;
+    -webkit-flex-wrap: wrap; flex-wrap: wrap; margin-bottom: 12px;
+}
+.diary-top-actions { display: -webkit-flex; display: flex; gap: 8px; }
+.diary-mini-btn {
+    background: white; color: var(--p); border: 2px solid rgba(233, 30, 99, 0.25);
+    padding: 10px 14px; border-radius: 14px; font-weight: 700; cursor: pointer; font-family: inherit;
+}
+.diary-stats {
+    display: -webkit-flex; display: flex;
+    -webkit-flex-wrap: wrap; flex-wrap: wrap;
+    gap: 10px; margin-bottom: 14px;
+}
+.diary-stat {
+    -webkit-flex: 1; flex: 1; min-width: 120px;
+    background: rgba(255,255,255,0.85); border-radius: 16px; padding: 12px; text-align: center;
+    border: 1px solid rgba(255,255,255,0.6);
+}
+.diary-stat strong { display: block; font-size: 1.15em; color: var(--pd); margin-bottom: 3px; }
+.diary-stat span { font-size: 0.78em; color: #777; }
+.mood-picker { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.mood-chip {
+    border: 2px solid rgba(233, 30, 99, 0.18); background: white; color: #666; border-radius: 999px;
+    padding: 8px 12px; font-weight: 700; font-size: 0.85em; cursor: pointer; font-family: inherit;
+}
+.mood-chip.active { background: linear-gradient(135deg, var(--p), var(--pl)); color: white; border-color: transparent; }
+.diary-input {
+    width: 100%; border: 2px solid var(--pl); border-radius: 16px;
+    padding: 15px; font-size: 16px; background: white; font-family: inherit;
+    min-height: 140px; margin-bottom: 12px; resize: vertical; color: #333; line-height: 1.5;
+}
+.diary-btn {
+    background: linear-gradient(135deg, var(--p), var(--pl));
+    color: white; border: none; padding: 12px 30px; border-radius: 20px;
+    font-size: 0.95em; font-weight: 600; cursor: pointer;
+    box-shadow: var(--s); font-family: inherit;
+}
+.diary-btn.tapped { -webkit-transform: scale(0.95); transform: scale(0.95); }
+.diary-entries { margin-top: 15px; }
+.diary-entry {
+    background: linear-gradient(135deg, rgba(233, 30, 99, 0.05), rgba(255, 107, 157, 0.05));
+    border-radius: 16px; padding: 15px; margin-bottom: 10px;
+    border-left: 4px solid var(--pl); position: relative;
+}
+.diary-entry-head {
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: flex-start; align-items: flex-start;
+    -webkit-justify-content: space-between; justify-content: space-between;
+    gap: 10px; margin-bottom: 8px;
+}
+.diary-entry-meta { display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; gap: 8px; min-width: 0; }
+.diary-entry-date { font-size: 0.75em; color: var(--p); font-weight: 700; }
+.diary-entry-mood {
+    font-size: 0.75em; color: var(--pd); font-weight: 700;
+    background: rgba(255,255,255,0.85); border-radius: 999px; padding: 5px 10px;
+    width: -webkit-fit-content; width: fit-content;
+}
+.diary-entry-actions { display: -webkit-flex; display: flex; -webkit-justify-content: flex-end; justify-content: flex-end; }
+.diary-delete {
+    border: none; background: rgba(255,255,255,0.92); color: var(--pd); cursor: pointer;
+    border-radius: 999px; padding: 8px 12px; font-size: 0.8em; font-weight: 700;
+    box-shadow: 0 6px 16px rgba(233, 30, 99, 0.12);
+}
+.diary-entry-text {
+    font-size: 0.95em; color: #444; line-height: 1.6;
+    -webkit-user-select: text; user-select: text;
+    white-space: pre-wrap; word-wrap: break-word;
+}
+.task-topbar {
+    display: -webkit-flex; display: flex; gap: 10px;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: space-between; justify-content: space-between;
+    margin-bottom: 15px;
+}
+.task-stats {
+    background: rgba(255,255,255,0.85); border-radius: 16px; padding: 10px 14px;
+    color: var(--pd); font-weight: 700; box-shadow: var(--s);
+}
+.task-form-toggle {
+    background: linear-gradient(135deg, var(--p), var(--pl)); color: white; border: none;
+    padding: 12px 16px; border-radius: 16px; font-weight: 700; font-family: inherit; cursor: pointer;
+}
+.task-form {
+    display: none; background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 18px; padding: 16px; margin-bottom: 15px; box-shadow: var(--s);
+    border: 1px solid rgba(255,255,255,0.5);
+}
+.task-form.open { display: block; -webkit-animation: fadeIn 0.3s; animation: fadeIn 0.3s; }
+.task-form input, .task-form textarea, .task-form select {
+    width: 100%; border: 2px solid var(--pl); border-radius: 14px; padding: 12px 14px;
+    font-size: 16px; background: white; font-family: inherit; color: #333; margin-bottom: 10px;
+}
+.task-form textarea { min-height: 80px; resize: vertical; }
+.task-form .btn-row { display: -webkit-flex; display: flex; gap: 10px; }
+.task-form button {
+    -webkit-flex: 1; flex: 1; border: none; border-radius: 14px; padding: 12px;
+    font-weight: 700; cursor: pointer; font-family: inherit;
+}
+.task-form .save-btn { background: linear-gradient(135deg, var(--p), var(--pl)); color: white; }
+.task-form .cancel-btn { background: #eee; color: #666; }
+.task-card {
+    background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 20px; padding: 20px; margin-bottom: 12px;
+    box-shadow: var(--s); border: 1px solid rgba(255, 255, 255, 0.5);
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    gap: 15px; cursor: pointer; -webkit-transition: all 0.3s; transition: all 0.3s;
+}
+.task-card.tapped { -webkit-transform: scale(0.98); transform: scale(0.98); }
+.task-card.completed {
+    opacity: 0.7;
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(139, 195, 74, 0.1));
+    border-left: 4px solid #4caf50;
+}
+.task-icon { font-size: 2.5em; -webkit-flex-shrink: 0; flex-shrink: 0; }
+.task-content { -webkit-flex: 1; flex: 1; min-width: 0; }
+.task-title { font-weight: 700; color: #333; font-size: 1em; margin-bottom: 4px; }
+.task-desc { font-size: 0.85em; color: #666; line-height: 1.4; }
+.task-delete {
+    background: rgba(255,255,255,0.92); border: none; color: #c2185b; font-size: 0.82em;
+    cursor: pointer; margin-top: 10px; border-radius: 999px; padding: 8px 12px; font-weight: 700;
+}
+.task-check {
+    width: 28px; height: 28px; border-radius: 50%;
+    border: 3px solid var(--pl);
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    font-size: 0.9em; -webkit-flex-shrink: 0; flex-shrink: 0;
+}
+.task-card.completed .task-check { background: #4caf50; border-color: #4caf50; color: white; }
+.streak-badge {
+    display: inline-block; background: linear-gradient(135deg, #ff9800, #ff5722);
+    color: white; padding: 4px 12px; border-radius: 20px;
+    font-size: 0.75em; font-weight: 700;
+}
+.delete-btn {
+    background: none; border: none; color: #e91e63;
+    font-size: 1.2em; cursor: pointer; padding: 5px; margin-left: 10px;
+    opacity: 0.75;
+}
+.backup-section {
+    background: var(--g);
+    -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+    border-radius: 20px; padding: 20px; margin-bottom: 20px;
+    box-shadow: var(--s); border: 1px solid rgba(255, 255, 255, 0.5);
+}
+.backup-title { font-size: 1em; font-weight: 700; color: var(--pd); margin-bottom: 12px; }
+.backup-buttons { display: -webkit-flex; display: flex; gap: 10px; -webkit-flex-wrap: wrap; flex-wrap: wrap; }
+.backup-btn {
+    -webkit-flex: 1; flex: 1; min-width: 120px; padding: 10px 15px; border-radius: 12px;
+    border: 2px solid var(--pl); background: white; color: var(--p);
+    font-weight: 600; cursor: pointer; font-size: 0.85em; font-family: inherit;
+}
+.modal-text { font-size: 0.95em; color: #666; margin-bottom: 20px; line-height: 1.5; }
+@media (max-width: 400px) {
+    .counter-main { font-size: 2.5em; }
+    .daily-text { font-size: 1em; }
+    .counter-detail { font-size: 0.75em; padding: 6px 10px; }
+    .nav-item .label { font-size: 0.6em; }
+    .nav-item .icon { font-size: 1.3em; }
+}
+@media (min-width: 430px) { .container { max-width: 430px; } }
+
+.install-banner {
+    position: fixed;
+    left: 14px;
+    right: 14px;
+    bottom: calc(90px + var(--safe-bottom));
+    z-index: 250;
+    display: none;
+    -webkit-align-items: center; align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.96);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.75);
+    box-shadow: 0 12px 35px rgba(233, 30, 99, 0.18);
+}
+.install-banner.show { display: -webkit-flex; display: flex; }
+.install-banner-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    -webkit-flex-shrink: 0; flex-shrink: 0;
+    background: linear-gradient(135deg, var(--p), var(--pl), #ffb199);
+    color: #fff;
+    display: -webkit-flex; display: flex;
+    -webkit-align-items: center; align-items: center;
+    -webkit-justify-content: center; justify-content: center;
+    font-size: 1.3em;
+    font-weight: 800;
+}
+.install-banner-copy { -webkit-flex: 1; flex: 1; min-width: 0; }
+.install-banner-title {
+    font-size: 0.92em;
+    font-weight: 800;
+    color: var(--pd);
+    margin-bottom: 4px;
+}
+.install-banner-text {
+    font-size: 0.82em;
+    color: #666;
+    line-height: 1.45;
+}
+.install-banner-actions {
+    display: -webkit-flex; display: flex;
+    -webkit-flex-direction: column; flex-direction: column;
+    gap: 8px;
+    -webkit-align-items: stretch; align-items: stretch;
+}
+.install-banner-btn,
+.install-banner-close {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+.install-banner-btn {
+    background: linear-gradient(135deg, var(--p), var(--pl));
+    color: white;
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-size: 0.82em;
+    font-weight: 700;
+    white-space: nowrap;
+}
+.install-banner-close {
+    background: rgba(233, 30, 99, 0.08);
+    color: var(--pd);
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 0.78em;
+    font-weight: 700;
+}
+body.standalone .install-banner { display: none !important; }
+@media (min-width: 768px) {
+    .install-banner {
+        left: 50%;
+        right: auto;
+        width: min(520px, calc(100vw - 28px));
+        -webkit-transform: translateX(-50%); transform: translateX(-50%);
+    }
+    body { padding-bottom: calc(110px + var(--safe-bottom)); }
+}
+
+/* iOS Safari'de input zoom'u engelle */
+@supports (-webkit-touch-callout: none) {
+    input[type="text"],
+    input[type="password"],
+    textarea,
+    select {
+        font-size: 16px !important;
+    }
+}
+
+/* iOS standalone mod için ekstra padding */
+@media all and (display-mode: standalone) {
+    body {
+        padding-top: max(var(--safe-top), 20px);
+    }
+}
+</style>
+</head>
+<body>
+<div id="installBanner" class="install-banner" aria-live="polite">
+    <div class="install-banner-icon">A</div>
+    <div class="install-banner-copy">
+        <div id="installBannerTitle" class="install-banner-title">Ana ekrana ekle</div>
+        <div id="installBannerText" class="install-banner-text">Bu uygulamayı iPhone ana ekranına veya bilgisayar masaüstüne uygulama gibi ekleyebilirsin.</div>
+    </div>
+    <div class="install-banner-actions">
+        <button id="installAppBtn" class="install-banner-btn" type="button">Yükle</button>
+        <button id="dismissInstallBannerBtn" class="install-banner-close" type="button">Kapat</button>
+    </div>
+</div>
+
+<div class="particles" id="particles"></div>
+<div class="container">
+
+<div class="page active" id="page-home">
+    <div class="profile-hero">
+        <div class="profile-avatar" id="profileAvatar">💖</div>
+        <div class="profile-meta">
+            <div class="profile-kicker">Ana ekran</div>
+            <div class="profile-name">Aşkım</div>
+            <div class="profile-note">Buraya profil fotoğrafı ekleyebilirsin. Fotoğrafa ya da düğmeye dokunman yeterli.</div>
+            <div class="profile-actions">
+                <button class="profile-btn primary" id="changeProfilePhotoBtn">📸 Fotoğraf Ekle</button>
+                <button class="profile-btn secondary" id="removeProfilePhotoBtn">🗑️ Kaldır</button>
+            </div>
+        </div>
+    </div>
+    <div class="counter-section">
+        <div class="counter-title">Birlikteyiz <span class="heartbeat">💕</span></div>
+        <div class="counter-main" id="daysCounter">0</div>
+        <div class="counter-label">gün</div>
+        <div class="counter-details">
+            <div class="counter-detail" id="hoursDetail">0 saat</div>
+            <div class="counter-detail" id="minutesDetail">0 dakika</div>
+            <div class="counter-detail" id="secondsDetail">0 saniye</div>
+        </div>
+        <div class="meet-date">12 Nisan 2026'dan beri</div>
+    </div>
+    <div class="daily-message">
+        <div class="daily-label">Bugünün Mesajı</div>
+        <div class="daily-text" id="dailyMessage">Yükleniyor...</div>
+    </div>
+    <div class="love-meter">
+        <div class="love-meter-title">Bugünkü Aşk Seviyem</div>
+        <div class="love-hearts" id="loveHearts"></div>
+        <div class="love-text" id="loveText">Seni sonsuza dek seviyorum!</div>
+    </div>
+    <div class="progress-section">
+        <div class="progress-header"><span>52 Haftalık Yolculuk</span><span id="progressText">0/52</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+    </div>
+    <button class="surprise-btn" id="surpriseBtn">🎁 Bana Sürpriz Yap!</button>
+    <div class="section-header"><span class="section-title">Haftalık Notlar</span><span class="section-badge" id="unlockedBadge">0 Açık</span></div>
+    <div id="weeksContainer"></div>
+</div>
+
+<div class="page" id="page-memories">
+    <div class="section-header"><span class="section-title">Anılarımız</span></div>
+    <button class="add-memory-btn" id="addMemoryBtn">➕ Yeni Anı Ekle</button>
+    <div class="memory-input" id="memoryInput">
+        <input type="text" id="memoryDateInput" placeholder="Tarih (örn: 15 Mayıs 2026)" autocomplete="off">
+        <textarea id="memoryTextInput" placeholder="Anınızı yazın..." autocomplete="off"></textarea>
+        <div class="btn-group">
+            <button class="save-btn" id="saveMemoryBtn">💾 Kaydet</button>
+            <button class="cancel-btn" id="cancelMemoryBtn">❌ İptal</button>
+        </div>
+    </div>
+    <div id="memoriesContainer"></div>
+</div>
+
+<div class="page" id="page-diary">
+    <div class="section-header"><span class="section-title">Günlük</span><span class="section-badge" id="streakBadge">🔥 0 gün</span></div>
+    <div class="diary-section">
+        <div class="diary-lock" id="diaryLockBox">
+            <div class="backup-title">🔐 Günlük Kilidi</div>
+            <div class="modal-text">Bu alanı açmak için şifreyi gir.</div>
+            <div class="diary-pass-row">
+                <input type="password" class="diary-pass-input" id="diaryPasswordInput" placeholder="Şifre" autocomplete="off">
+                <button class="diary-btn" id="unlockDiaryBtn">Aç</button>
+            </div>
+        </div>
+        <div class="diary-protected" id="diaryProtected">
+            <div class="diary-toolbar">
+                <input type="text" class="diary-search" id="diarySearchInput" placeholder="Günlüklerde ara..." autocomplete="off">
+                <div class="diary-top-actions">
+                    <button class="diary-mini-btn" id="lockDiaryBtn">🔒 Kilitle</button>
+                </div>
+            </div>
+            <div class="diary-stats">
+                <div class="diary-stat"><strong id="diaryCountStat">0</strong><span>Kayıt</span></div>
+                <div class="diary-stat"><strong id="diaryMoodStat">🤍</strong><span>Son ruh hali</span></div>
+            </div>
+            <div class="mood-picker" id="moodPicker"></div>
+            <textarea class="diary-input" id="diaryInput" placeholder="Bugün içinden geçenleri yaz..."></textarea>
+            <button class="diary-btn" id="saveDiaryBtn">💾 Kaydet</button>
+            <div class="diary-entries" id="diaryEntries"></div>
+        </div>
+    </div>
+</div>
+
+<div class="page" id="page-tasks">
+    <div class="section-header"><span class="section-title">Kendin İçin</span><span class="streak-badge" id="taskStreak">🔥 0 gün</span></div>
+    <div class="task-topbar">
+        <div class="task-stats" id="taskStats">0 / 0 tamamlandı</div>
+        <button class="task-form-toggle" id="toggleTaskFormBtn">➕ Yeni Görev</button>
+    </div>
+    <div class="task-form" id="taskForm">
+        <input type="text" id="taskTitleInput" placeholder="Görev başlığı" autocomplete="off">
+        <textarea id="taskDescInput" placeholder="Kısa açıklama" autocomplete="off"></textarea>
+        <select id="taskIconInput">
+            <option value="✨">✨ Parıltı</option>
+            <option value="📚">📚 Kitap</option>
+            <option value="💧">💧 Su</option>
+            <option value="🚶">🚶 Yürüyüş</option>
+            <option value="🧘">🧘 Meditasyon</option>
+            <option value="🎵">🎵 Müzik</option>
+            <option value="💪">💪 Spor</option>
+            <option value="📝">📝 Yazı</option>
+            <option value="🌙">🌙 Dinlenme</option>
+            <option value="☕">☕ Mola</option>
+        </select>
+        <div class="btn-row">
+            <button class="save-btn" id="saveTaskBtn">Kaydet</button>
+            <button class="cancel-btn" id="cancelTaskBtn">İptal</button>
+        </div>
+    </div>
+    <div id="tasksContainer"></div>
+</div>
+
+<div class="page" id="page-gallery">
+    <div class="section-header"><span class="section-title">Fotoğraf Albümü</span></div>
+    <div class="backup-section">
+        <div class="backup-title">📦 Verilerini Yedekle</div>
+        <div class="backup-buttons">
+            <button class="backup-btn" id="exportBtn">📤 Dışa Aktar</button>
+            <button class="backup-btn" id="importBtn">📥 İçe Aktar</button>
+        </div>
+        <input type="file" id="importFileInput" accept=".json" style="display:none">
+    </div>
+    <div class="gallery-grid" id="galleryContainer"></div>
+    <input type="file" id="photoInput" accept="image/*" style="display:none">
+    <input type="file" id="profilePhotoInput" accept="image/*" style="display:none">
+</div>
+
+</div>
+
+<div class="bottom-nav">
+    <div class="nav-item active" data-page="home"><span class="icon">🏠</span><span class="label">Ana Sayfa</span></div>
+    <div class="nav-item" data-page="memories"><span class="icon">💭</span><span class="label">Anılar</span></div>
+    <div class="nav-item" data-page="diary"><span class="icon">📔</span><span class="label">Günlük</span></div>
+    <div class="nav-item" data-page="tasks"><span class="icon">✨</span><span class="label">Kendin</span></div>
+    <div class="nav-item" data-page="gallery"><span class="icon">📷</span><span class="label">Albüm</span></div>
+</div>
+
+<div class="notification" id="notification"></div>
+<script>
+(function() {
+    'use strict';
+
+    var STORAGE_PREFIX = 'askimiz_';
+    var memoryStorage = {};
+
+    function isStorageAvailable() {
+        try {
+            var t = '__test__';
+            localStorage.setItem(t, t);
+            localStorage.removeItem(t);
+            return true;
+        } catch (e) { return false; }
+    }
+    var storageOK = isStorageAvailable();
+
+    function saveData(key, value) {
+        var k = STORAGE_PREFIX + key;
+        try {
+            var json = JSON.stringify(value);
+            if (storageOK) localStorage.setItem(k, json);
+            memoryStorage[k] = json;
+            return true;
+        } catch (e) { return false; }
+    }
+    function loadData(key, defaultValue) {
+        var k = STORAGE_PREFIX + key;
+        try {
+            var data = null;
+            if (storageOK) data = localStorage.getItem(k);
+            if (data === null && memoryStorage[k]) data = memoryStorage[k];
+            return data ? JSON.parse(data) : defaultValue;
+        } catch (e) { return defaultValue; }
+    }
+
+    var MEET_DATE = new Date(2026, 3, 12, 0, 0, 0);
+
+    var notes = [
+        "Hafta 1: Bugün bu notları yazmaya başlıyorum. Her hafta seni ne kadar sevdiğimi, ne kadar özel olduğunu hatırlatacağım. İlk haftamız kutlu olsun aşkım! 💕",
+        "Hafta 2: ilk gecemiz aklıma geldi. O an senin ne kadar huzur gibi olduğunu bir kez daha anladım.",
+        "Hafta 3: Bazen sadece güzelliğini düşünmek bile içimi ısıtıyor. Sen teksin.",
+        "Hafta 4: Bir ay oldu birlikteyiz! Seninle geçen her an, hayatımın en güzel anı. İyi ki varsın!",
+        "Hafta 5: 'Sen, benim en güzel rüyamın gerçeğisin.' Bugün seni düşündüm.",
+        "Hafta 6: ilk hedefimiz aklıma geldi. O gün de bugün de seninle cesurum.",
+        "Hafta 7: ilk teşekkürümüz aklıma geldi. Sen değerlisin, sen ilham kaynağımsın.",
+        "Hafta 8: Bu hafta seni kalbinden hatırladım. Deniz gibi derinsin.",
+        "Hafta 9: ilk sözümüz aklıma geldi. O an ne kadar kusursuz olduğunu anladım.",
+        "Hafta 10: 'Seni sevmek, dünyanın en güzel duygusu.' Seninle her gün bir armağan.",
+        "Hafta 11: ilk göz temasımız aklıma geldi. Ne kadar göz alıcı olduğunu anladım.",
+        "Hafta 12: ilk zaferin aklıma geldi. Seninle cennetteyim.",
+        "Hafta 13: 3 ay oldu! Sen benim için bir ilham kaynağısın. Her gün daha çok aşık oluyorum.",
+        "Hafta 14: Bugün tarzın hakkında düşündüm. Işıltılı bir insansın.",
+        "Hafta 15: ilk planımız aklıma geldi. Müzik gibisin.",
+        "Hafta 16: Bugün uzakta hakkında düşündüm. Dünyalar güzelisin.",
+        "Hafta 17: ilk buluşmamız aklıma geldi. Ay gibisin.",
+        "Hafta 18: ilk yürüyüşümüz aklıma geldi. Seninle güçlüyüm.",
+        "Hafta 19: ilk özürümüz aklıma geldi. Seninle bütünüm.",
+        "Hafta 20: Bazen sadece samimiyetini düşünmek bile içimi ısıtıyor.",
+        "Hafta 21: ilk mesajımız aklıma geldi. Seninle güçlüyüm.",
+        "Hafta 22: ilk barışmamız aklıma geldi. Kraliçe gibisin.",
+        "Hafta 23: ilk göz temasımız aklıma geldi. Akıllara zararsın.",
+        "Hafta 24: ilk anımız aklıma geldi. Güneş gibisin.",
+        "Hafta 25: ilk yolculuğumuz aklıma geldi. Aşk gibisin.",
+        "Hafta 26: 6 ay oldu! Yarım yıl geçti ve sen hâlâ her gün beni büyülüyorsun.",
+        "Hafta 27: 'Aşk, seninle başladı ve seninle devam ediyor.' Yaşam gibisin.",
+        "Hafta 28: Bazen sadece yüzünü düşünmek bile içimi ısıtıyor.",
+        "Hafta 29: Bugün ruhun hakkında düşündüm. Olağanüstüsün.",
+        "Hafta 30: Bazen sadece sıcaklığını düşünmek bile içimi ısıtıyor.",
+        "Hafta 31: 'Seni sevmek, dünyanın en güzel duygusu.' Hayranlık uyandıransın.",
+        "Hafta 32: ilk sözümüz aklıma geldi. Yıldız gibisin.",
+        "Hafta 33: 'Seninle her an, bir masal gibi.' Yaşam gibisin.",
+        "Hafta 34: Bu hafta seni bakışlarınla hatırladım. Benzersizsin.",
+        "Hafta 35: Bugün gözlerin hakkında düşündüm. Göz alıcısın.",
+        "Hafta 36: Bu hafta seni gücünle hatırladım. Değerlisin.",
+        "Hafta 37: Bu hafta seni saçlarınla hatırladım. Müzik gibisin.",
+        "Hafta 38: ilk şarkımız aklıma geldi. Resim gibisin.",
+        "Hafta 39: 9 ay oldu! Bu dokuz ayda yaşadığım her an, en değerli hazinem.",
+        "Hafta 40: ilk yemeğimiz aklıma geldi. Ruhanisin.",
+        "Hafta 41: Bu hafta seni kokunla hatırladım. Güneş gibisin.",
+        "Hafta 42: Bu hafta seni sessizliğinle hatırladım. Masal gibisin.",
+        "Hafta 43: ilk yemeğimiz aklıma geldi. Melek gibisin.",
+        "Hafta 44: Bazen sadece varlığını düşünmek bile içimi ısıtıyor.",
+        "Hafta 45: ilk barışmamız aklıma geldi. Gülüşün gibisin.",
+        "Hafta 46: Bu hafta seni yüzünle hatırladım. Şiir gibisin.",
+        "Hafta 47: 'Seni sevmek, dünyanın en güzel şarkısı.' Hayranlık uyandıransın.",
+        "Hafta 48: Bazen sadece zekanı düşünmek bile içimi ısıtıyor.",
+        "Hafta 49: Bazen sadece sözlerini düşünmek bile içimi ısıtıyor.",
+        "Hafta 50: 'Aşk, seninle başlıyor ve seninle bitiyor.' Deniz gibi derinsin.",
+        "Hafta 51: Bu hafta seni dokunuşunla hatırladım. En değerli hazınemsin.",
+        "Hafta 52: Bugün senin doğum günün! Bir yıldır sana ne kadar değerli olduğunu hatırlatmaya çalışıyorum. Sen benim her şeyimsin. Seni sonsuza dek seviyorum! 🎂💕"
+    ];
+
+    var dailyMessages = [
+        "Bugün seni düşündüm ve yüzümde kocaman bir gülümseme belirdi. 💕",
+        "Gözlerin, dünyadaki en güzel manzara. Seni seviyorum!",
+        "Seninle her an, bir ömre bedel. İyi ki varsın!",
+        "Kalbim senin için atıyor, her gün biraz daha hızlı. 💓",
+        "Bugün de seninle gurur duydum. Sen dünyadaki en özel insansın!",
+        "Seni özledim... Ama kalbimde her zaman yanımdasın.",
+        "Senin gülüşün, benim en güzel ilacım. 😊",
+        "Bugün seni biraz daha çok sevdim. Dünkinden daha çok.",
+        "Seninle hayat, bir masal gibi. Ve ben bu masalın sonsuza dek sürmesini istiyorum.",
+        "Dünyada milyarlarca insan var ama ben seni seçtim. Her gün yeniden. 💕"
+    ];
+
+    var surprises = [
+        "🌹 Sana binlerce gül gönderiyorum!", "💋 Yanaklarından öpüyorum!",
+        "🤗 Sana kocaman sarılıyorum!", "🎵 Senin için bir şarkı söylüyorum!",
+        "✨ Senin için yıldızları sayıyorum!", "🍫 Sana çikolata getiriyorum!",
+        "💌 Sana bir mektup yazıyorum!", "🌟 Sen benim yıldızımsın!",
+        "🎀 Sana bir hediye paketliyorum!", "💖 Kalbim tamamen senin!"
+    ];
+
+    var defaultMemories = [
+        {date: "12 Nisan 2026", text: "Bugün tanıştık. O anı asla unutmayacağım."},
+        {date: "13 Nisan 2026", text: "İlk mesajlaşmamız. Heyecanlıydım."},
+        {date: "19 Nisan 2026", text: "İlk haftamızı tamamladık."},
+        {date: "26 Nisan 2026", text: "İlk ayımıza doğru ilerliyoruz."},
+        {date: "12 Mayıs 2026", text: "Bir ay oldu! Sen dünyadaki en özel insansın."},
+        {date: "12 Haziran 2026", text: "İki ay! Zaman seninle uçup gidiyor."},
+        {date: "12 Temmuz 2026", text: "Üç ay! Sen benim her şeyimsin."},
+        {date: "12 Ağustos 2026", text: "Dört ay! Seninle her mevsim bahar."},
+        {date: "12 Eylül 2026", text: "Beş ay! Her gün bir öncekinden daha güzel."},
+        {date: "12 Ekim 2026", text: "Altı ay! Yarım yıl geçti."},
+        {date: "12 Kasım 2026", text: "Yedi ay! Seninle her zorluk aşılır."},
+        {date: "12 Aralık 2026", text: "Sekiz ay! Kış geldi ama seninle her zaman yaz."},
+        {date: "12 Ocak 2027", text: "Dokuz ay! Yeni yıl, yeni umutlar."},
+        {date: "12 Şubat 2027", text: "On ay! Her gün Sevgililer Günü."},
+        {date: "12 Mart 2027", text: "On bir ay! Bir yıla bir adım kaldı."},
+        {date: "12 Nisan 2027", text: "Bir yıl! İyi ki tanışmışız!"}
+    ];
+
+    var moodOptions = [
+        {value: '😍', label: 'Mutlu'},
+        {value: '😌', label: 'Huzurlu'},
+        {value: '🥹', label: 'Duygusal'},
+        {value: '😴', label: 'Yorgun'},
+        {value: '🔥', label: 'Motive'},
+        {value: '🤍', label: 'Sakin'}
+    ];
+
+    var baseTasks = [
+        {id: 'base-1', text: "Kendin için 1 saat kitap oku", icon: "📚", desc: "Bugün kendine bir saat ayır."},
+        {id: 'base-2', text: "20 dk hiçbir şey yapmadan otur", icon: "🧘", desc: "Sadece otur, nefes al."},
+        {id: 'base-3', text: "Aklındaki fikri bir kağıda yaz", icon: "✍️", desc: "Düşüncelerini yaz."},
+        {id: 'base-4', text: "Kendine kahve/çay hazırla", icon: "☕", desc: "Tadını çıkar."},
+        {id: 'base-5', text: "3 derin nefes al", icon: "🌬️", desc: "Gözlerini kapat, derin nefes al."},
+        {id: 'base-6', text: "Kendine güzel bir şey söyle", icon: "💬", desc: "Sen değerlisin."},
+        {id: 'base-7', text: "Yürüyüşe çık", icon: "🚶", desc: "15 dakika yürüyüş yap."},
+        {id: 'base-8', text: "Bir şarkı dinle", icon: "🎵", desc: "Sevdiğin bir şarkıyı dinle."},
+        {id: 'base-9', text: "Bir duygunu yaz", icon: "📝", desc: "Hissettiklerini kelimelere dök."},
+        {id: 'base-10', text: "Kendine küçük bir hediye al", icon: "🎁", desc: "Kendine küçük bir şey al."},
+        {id: 'base-11', text: "Eski bir fotoğrafına bak", icon: "📷", desc: "O anı hatırla."},
+        {id: 'base-12', text: "Birine iyi bir şey söyle", icon: "💝", desc: "Birine güzel bir söz söyle."},
+        {id: 'base-13', text: "Kendine zaman ayır", icon: "⏰", desc: "Sadece kendin için 30 dakika."},
+        {id: 'base-14', text: "Bir hayalini hatırla", icon: "🌟", desc: "Küçüklüğündeki bir hayalini hatırla."},
+        {id: 'base-15', text: "Bir bardak su iç", icon: "💧", desc: "Bugün bedenini biraz daha iyi hissettir."},
+        {id: 'base-16', text: "5 dakika esneme yap", icon: "💪", desc: "Vücudunu rahatlat."},
+        {id: 'base-17', text: "Erken uyumayı hedefle", icon: "🌙", desc: "Bugün kendine iyi bir uyku hediye et."}
+    ];
+
+    var galleryLabels = ["İlk Buluşma", "İlk Selfie", "İlk Yolculuk", "İlk Yemek", "İlk Hediye", "İlk Dans"];
+
+    var customMemories = loadData('memories', []);
+    var allMemories = defaultMemories.concat(customMemories);
+    var diaryEntries = loadData('diary', []);
+    var currentStreak = loadData('streak', 0);
+    var lastDiaryDate = loadData('lastDiaryDate', '');
+    var completedTasks = loadData('completedTasks', {});
+    var customTasks = loadData('customTasks', []);
+    var hiddenBaseTasks = loadData('hiddenBaseTasks', []);
+    var taskStreak = loadData('taskStreak', 0);
+    var lastTaskDate = loadData('lastTaskDate', '');
+    var photos = loadData('photos', {});
+    var profilePhoto = loadData('profilePhoto', '');
+    var diaryUnlocked = loadData('diaryUnlocked', false);
+    var selectedMood = loadData('selectedMood', '🤍');
+    var currentPhotoIndex = -1;
+
+    function addTap(el, callback) {
+        if (!el) return;
+        var lastTouchTime = 0;
+        var moving = false;
+
+        el.addEventListener('touchstart', function() {
+            moving = false;
+            el.classList.add('tapped');
+        }, { passive: true });
+
+        el.addEventListener('touchmove', function() { moving = true; }, { passive: true });
+
+        el.addEventListener('touchend', function(e) {
+            el.classList.remove('tapped');
+            if (moving) return;
+            lastTouchTime = Date.now();
+            e.preventDefault();
+            callback.call(el, e);
+        }, { passive: false });
+
+        el.addEventListener('touchcancel', function() {
+            el.classList.remove('tapped');
+            moving = false;
+        });
+
+        el.addEventListener('click', function(e) {
+            if (Date.now() - lastTouchTime < 700) {
+                e.preventDefault();
+                return;
+            }
+            callback.call(el, e);
+        });
+    }
+
+    function escapeHtml(text) {
+        if (!text) return '';
+        return String(text).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
+    }
+
+    function showNotification(text) {
+        var notif = document.getElementById('notification');
+        if (!notif) return;
+        notif.textContent = text;
+        notif.classList.add('show');
+        clearTimeout(notif._t);
+        notif._t = setTimeout(function() { notif.classList.remove('show'); }, 3000);
+    }
+
+    function updateCounter() {
+        var now = new Date();
+        var diff = now - MEET_DATE;
+        if (diff < 0) {
+            document.getElementById('daysCounter').textContent = '0';
+            document.getElementById('hoursDetail').textContent = '0 saat';
+            document.getElementById('minutesDetail').textContent = '0 dakika';
+            document.getElementById('secondsDetail').textContent = '0 saniye';
+            return;
+        }
+        var d = Math.floor(diff / 86400000);
+        var h = Math.floor((diff % 86400000) / 3600000);
+        var m = Math.floor((diff % 3600000) / 60000);
+        var s = Math.floor((diff % 60000) / 1000);
+        document.getElementById('daysCounter').textContent = d;
+        document.getElementById('hoursDetail').textContent = h + ' saat';
+        document.getElementById('minutesDetail').textContent = m + ' dakika';
+        document.getElementById('secondsDetail').textContent = s + ' saniye';
+    }
+
+    function setDailyMessage() {
+        var t = new Date();
+        var doy = Math.floor((t - new Date(t.getFullYear(), 0, 0)) / 86400000);
+        document.getElementById('dailyMessage').textContent = dailyMessages[doy % dailyMessages.length];
+    }
+
+    function setLoveMeter() {
+        var hearts = document.getElementById('loveHearts');
+        hearts.innerHTML = '';
+        for (var i = 0; i < 5; i++) {
+            var h = document.createElement('span');
+            h.className = 'love-heart';
+            h.textContent = '💖';
+            h.style.animationDelay = (i * 0.1) + 's';
+            (function(el) {
+                addTap(el, function() {
+                    el.classList.add('tapped');
+                    setTimeout(function() { el.classList.remove('tapped'); }, 300);
+                });
+            })(h);
+            hearts.appendChild(h);
+        }
+    }
+
+    function renderProfilePhoto() {
+        var avatar = document.getElementById('profileAvatar');
+        if (!avatar) return;
+        if (profilePhoto) avatar.innerHTML = '<img src="' + profilePhoto + '" alt="Profil fotoğrafı">';
+        else avatar.textContent = '💖';
+    }
+
+    function pickProfilePhoto() {
+        var input = document.getElementById('profilePhotoInput');
+        if (!input) return;
+        input.value = '';
+        setTimeout(function() { input.click(); }, 100);
+    }
+
+    function handleProfilePhotoSelect(e) {
+        var file = e.target.files && e.target.files[0];
+        if (!file) return;
+        if (file.size > 5 * 1024 * 1024) {
+            showNotification('Profil fotoğrafı çok büyük (max 5MB)');
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+            compressImage(ev.target.result, function(compressed) {
+                profilePhoto = compressed;
+                if (saveData('profilePhoto', profilePhoto)) {
+                    renderProfilePhoto();
+                    showNotification('📸 Profil fotoğrafı güncellendi');
+                } else {
+                    showNotification('⚠️ Depolama dolu');
+                }
+            });
+        };
+        reader.onerror = function() { showNotification('❌ Profil fotoğrafı okunamadı'); };
+        reader.readAsDataURL(file);
+    }
+
+    function removeProfilePhoto() {
+        profilePhoto = '';
+        saveData('profilePhoto', profilePhoto);
+        renderProfilePhoto();
+        showNotification('🗑️ Profil fotoğrafı kaldırıldı');
+    }
+
+    function renderWeeks() {
+        var container = document.getElementById('weeksContainer');
+        var now = new Date();
+        var diffWeeks = Math.floor((now - MEET_DATE) / (86400000 * 7));
+        var currentWeek = Math.max(1, Math.min(diffWeeks + 1, 52));
+        var unlocked = 0;
+        container.innerHTML = '';
+        var specialWeeks = [1, 4, 13, 26, 39, 52];
+
+        for (var i = 0; i < notes.length; i++) {
+            var weekNum = i + 1;
+            var isUnlocked = weekNum <= currentWeek && now >= MEET_DATE;
+            var isCurrent = weekNum === currentWeek && now >= MEET_DATE;
+            if (isUnlocked) unlocked++;
+
+            var card = document.createElement('div');
+            card.className = 'week-card';
+            var isSpecial = specialWeeks.indexOf(weekNum) >= 0;
+            var noteText = isUnlocked ? notes[i].split(':').slice(1).join(':').trim() : 'Bu not henüz kilidi açılmadı... 🔒';
+            var specialHtml = isSpecial ? '<span class="special-badge">⭐</span>' : '';
+            var numClass = isCurrent ? 'current' : (isUnlocked ? 'unlocked' : 'locked');
+
+            var header = document.createElement('div');
+            header.className = 'week-header';
+            header.innerHTML =
+                '<div class="week-info">' +
+                    '<div class="week-number ' + numClass + '">' + weekNum + '</div>' +
+                    '<div class="week-title-text">Hafta ' + weekNum + specialHtml + '</div>' +
+                '</div>' +
+                '<div class="week-status" id="status-' + i + '">🔽</div>';
+
+            var content = document.createElement('div');
+            content.className = 'week-content';
+            content.id = 'content-' + i;
+            content.innerHTML = '<div class="week-note-text">' + escapeHtml(noteText) + '</div>';
+
+            (function(idx) {
+                addTap(header, function() { toggleWeek(idx); });
+            })(i);
+
+            card.appendChild(header);
+            card.appendChild(content);
+            container.appendChild(card);
+        }
+
+        document.getElementById('unlockedBadge').textContent = unlocked + ' Açık';
+        document.getElementById('progressText').textContent = (now < MEET_DATE ? 0 : currentWeek) + '/52';
+        document.getElementById('progressBar').style.width = (now < MEET_DATE ? 0 : (currentWeek / 52 * 100)) + '%';
+    }
+
+    function toggleWeek(idx) {
+        var content = document.getElementById('content-' + idx);
+        var status = document.getElementById('status-' + idx);
+        if (content.classList.contains('open')) {
+            content.classList.remove('open');
+            status.classList.remove('open');
+        } else {
+            var allC = document.querySelectorAll('.week-content');
+            var allS = document.querySelectorAll('.week-status');
+            for (var i = 0; i < allC.length; i++) allC[i].classList.remove('open');
+            for (var j = 0; j < allS.length; j++) allS[j].classList.remove('open');
+            content.classList.add('open');
+            status.classList.add('open');
+        }
+    }
+
+    function renderMemories() {
+        var container = document.getElementById('memoriesContainer');
+        container.innerHTML = '';
+        var now = new Date();
+        var monthMap = {'Ocak':0,'Şubat':1,'Mart':2,'Nisan':3,'Mayıs':4,'Haziran':5,'Temmuz':6,'Ağustos':7,'Eylül':8,'Ekim':9,'Kasım':10,'Aralık':11};
+
+        for (var i = 0; i < allMemories.length; i++) {
+            var m = allMemories[i];
+            var show = true;
+            if (i < defaultMemories.length) {
+                try {
+                    var p = m.date.split(' ');
+                    if (p.length === 3 && monthMap[p[1]] !== undefined) {
+                        var md = new Date(parseInt(p[2]), monthMap[p[1]], parseInt(p[0]));
+                        if (now < md) show = false;
+                    }
+                } catch (e) {}
+            }
+            if (!show) continue;
+
+            var card = document.createElement('div');
+            card.className = 'memory-card';
+            var deleteHtml = '';
+            if (i >= defaultMemories.length) {
+                deleteHtml = '<button class="delete-btn" data-mem-idx="' + (i - defaultMemories.length) + '">🗑️</button>';
+            }
+            card.innerHTML =
+                '<div class="memory-date"><span>📅 ' + escapeHtml(m.date) + '</span>' + deleteHtml + '</div>' +
+                '<div class="memory-text">' + escapeHtml(m.text) + '</div>';
+            container.appendChild(card);
+        }
+
+        var btns = container.querySelectorAll('.delete-btn');
+        for (var k = 0; k < btns.length; k++) {
+            (function(b) {
+                addTap(b, function() {
+                    var idx = parseInt(b.getAttribute('data-mem-idx'));
+                    customMemories.splice(idx, 1);
+                    saveData('memories', customMemories);
+                    allMemories = defaultMemories.concat(customMemories);
+                    renderMemories();
+                    showNotification('🗑️ Anı silindi');
+                });
+            })(btns[k]);
+        }
+    }
+
+    function toggleMemoryInput() {
+        document.getElementById('memoryInput').classList.toggle('open');
+    }
+
+    function saveMemory() {
+        var dEl = document.getElementById('memoryDateInput');
+        var tEl = document.getElementById('memoryTextInput');
+        var date = dEl.value.trim();
+        var text = tEl.value.trim();
+        if (!date || !text) {
+            showNotification('Lütfen tarih ve anı yazın!');
+            return;
+        }
+        customMemories.push({date: date, text: text});
+        saveData('memories', customMemories);
+        allMemories = defaultMemories.concat(customMemories);
+        renderMemories();
+        dEl.value = '';
+        tEl.value = '';
+        dEl.blur();
+        tEl.blur();
+        toggleMemoryInput();
+        showNotification('✨ Anı kaydedildi!');
+    }
+
+    function renderDiaryAccess() {
+        var lockBox = document.getElementById('diaryLockBox');
+        var protectedBox = document.getElementById('diaryProtected');
+        if (!lockBox || !protectedBox) return;
+        if (diaryUnlocked) {
+            lockBox.classList.add('hidden');
+            protectedBox.classList.add('open');
+        } else {
+            lockBox.classList.remove('hidden');
+            protectedBox.classList.remove('open');
+        }
+    }
+
+    function unlockDiary() {
+        var input = document.getElementById('diaryPasswordInput');
+        if (!input) return;
+        if (input.value.trim() === 'mmc') {
+            diaryUnlocked = true;
+            saveData('diaryUnlocked', true);
+            input.value = '';
+            renderDiaryAccess();
+            renderDiary();
+            showNotification('🔓 Günlük açıldı');
+        } else {
+            showNotification('❌ Şifre yanlış');
+        }
+    }
+
+    function lockDiary() {
+        diaryUnlocked = false;
+        saveData('diaryUnlocked', false);
+        renderDiaryAccess();
+        showNotification('🔒 Günlük kilitlendi');
+    }
+
+    function setMoodPicker() {
+        var picker = document.getElementById('moodPicker');
+        if (!picker) return;
+        picker.innerHTML = '';
+        for (var i = 0; i < moodOptions.length; i++) {
+            var btn = document.createElement('button');
+            btn.className = 'mood-chip' + (moodOptions[i].value === selectedMood ? ' active' : '');
+            btn.setAttribute('type', 'button');
+            btn.setAttribute('data-mood', moodOptions[i].value);
+            btn.textContent = moodOptions[i].value + ' ' + moodOptions[i].label;
+            (function(button, value) {
+                addTap(button, function() {
+                    selectedMood = value;
+                    saveData('selectedMood', selectedMood);
+                    setMoodPicker();
+                });
+            })(btn, moodOptions[i].value);
+            picker.appendChild(btn);
+        }
+    }
+
+    function getMoodLabel(value) {
+        for (var i = 0; i < moodOptions.length; i++) {
+            if (moodOptions[i].value === value) return moodOptions[i].label;
+        }
+        return 'Not';
+    }
+
+    function saveDiary() {
+        if (!diaryUnlocked) {
+            showNotification('Önce günlüğü açmalısın');
+            return;
+        }
+        var input = document.getElementById('diaryInput');
+        var textValue = input.value.trim();
+        if (!textValue) {
+            showNotification('Lütfen bir şeyler yaz!');
+            return;
+        }
+        var t = new Date();
+        var months = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+        var dateStr = t.getDate() + ' ' + months[t.getMonth()] + ' ' + t.getFullYear();
+        diaryEntries.unshift({
+            id: 'diary-' + Date.now(),
+            date: dateStr,
+            text: textValue,
+            mood: selectedMood,
+            timestamp: Date.now()
+        });
+        saveData('diary', diaryEntries);
+        input.value = '';
+        input.blur();
+
+        var today = dateStr;
+        if (lastDiaryDate !== today) {
+            var lt = lastDiaryDate ? new Date(lastDiaryDate.split(' ').reverse().join('-')) : null;
+            var td = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+            var yd = new Date(td); yd.setDate(yd.getDate() - 1);
+            if (lt && lt.toDateString() === yd.toDateString()) currentStreak++;
+            else currentStreak = 1;
+            lastDiaryDate = today;
+            saveData('streak', currentStreak);
+            saveData('lastDiaryDate', lastDiaryDate);
+            updateStreakBadge();
+        }
+
+        renderDiary();
+        showNotification('📔 Günlük kaydedildi!');
+    }
+
+    function updateDiaryStats(filtered) {
+        var countEl = document.getElementById('diaryCountStat');
+        var moodEl = document.getElementById('diaryMoodStat');
+        if (countEl) countEl.textContent = diaryEntries.length;
+        if (moodEl) moodEl.textContent = diaryEntries.length > 0 ? (diaryEntries[0].mood || '🤍') : '🤍';
+    }
+
+    function renderDiary() {
+        var container = document.getElementById('diaryEntries');
+        if (!container) return;
+        container.innerHTML = '';
+        var queryEl = document.getElementById('diarySearchInput');
+        var query = queryEl ? queryEl.value.trim().toLowerCase() : '';
+        var filtered = [];
+        for (var i = 0; i < diaryEntries.length; i++) {
+            var mood = diaryEntries[i].mood || '🤍';
+            var label = getMoodLabel(mood).toLowerCase();
+            var haystack = ((diaryEntries[i].date || '') + ' ' + (diaryEntries[i].text || '') + ' ' + label).toLowerCase();
+            if (!query || haystack.indexOf(query) >= 0) filtered.push(diaryEntries[i]);
+        }
+
+        var max = Math.min(filtered.length, 30);
+        for (var j = 0; j < max; j++) {
+            var moodVal = filtered[j].mood || '🤍';
+            var e = document.createElement('div');
+            e.className = 'diary-entry';
+            var entryId = filtered[j].id || ('legacy-' + (filtered[j].timestamp || j));
+            e.innerHTML =
+                '<div class="diary-entry-head">' +
+                    '<div class="diary-entry-meta">' +
+                        '<div class="diary-entry-date">📅 ' + escapeHtml(filtered[j].date) + '</div>' +
+                        '<div class="diary-entry-mood">' + escapeHtml(moodVal + ' ' + getMoodLabel(moodVal)) + '</div>' +
+                    '</div>' +
+                    '<div class="diary-entry-actions"><button class="diary-delete" data-diary-id="' + escapeHtml(entryId) + '">🗑️ Sil</button></div>' +
+                '</div>' +
+                '<div class="diary-entry-text">' + escapeHtml(filtered[j].text) + '</div>';
+            container.appendChild(e);
+        }
+        var deleteBtns = container.querySelectorAll('.diary-delete');
+        for (var d = 0; d < deleteBtns.length; d++) {
+            (function(btn) {
+                addTap(btn, function(ev) {
+                    if (ev) {
+                        ev.preventDefault();
+                        ev.stopPropagation();
+                    }
+                    deleteDiaryEntry(btn.getAttribute('data-diary-id'));
+                });
+            })(deleteBtns[d]);
+        }
+        updateDiaryStats(filtered);
+    }
+
+    function deleteDiaryEntry(entryId) {
+        diaryEntries = diaryEntries.filter(function(entry, idx) {
+            var currentId = entry.id || ('legacy-' + (entry.timestamp || idx));
+            return currentId !== entryId;
+        });
+        saveData('diary', diaryEntries);
+        renderDiary();
+        showNotification('🗑️ Günlük kaydı silindi');
+    }
+
+    function updateStreakBadge() {
+        document.getElementById('streakBadge').textContent = '🔥 ' + currentStreak + ' gün';
+    }
+
+    function getAllTasks() {
+        var visibleBaseTasks = baseTasks.filter(function(task) {
+            return hiddenBaseTasks.indexOf(task.id) === -1;
+        });
+        return visibleBaseTasks.concat(customTasks);
+    }
+
+    function migrateCompletedTasks() {
+        var changed = false;
+        var all = getAllTasks();
+        for (var day in completedTasks) {
+            if (!Object.prototype.hasOwnProperty.call(completedTasks, day) || !Array.isArray(completedTasks[day])) continue;
+            var converted = [];
+            for (var i = 0; i < completedTasks[day].length; i++) {
+                var item = completedTasks[day][i];
+                if (typeof item === 'number' && all[item]) {
+                    converted.push(all[item].id);
+                    changed = true;
+                } else if (typeof item === 'string') {
+                    converted.push(item);
+                }
+            }
+            completedTasks[day] = converted;
+        }
+        if (changed) saveData('completedTasks', completedTasks);
+    }
+
+    function updateTaskStats(doneToday, total) {
+        var el = document.getElementById('taskStats');
+        if (el) el.textContent = doneToday + ' / ' + total + ' tamamlandı';
+    }
+
+    function renderTasks() {
+        var container = document.getElementById('tasksContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        var today = new Date().toDateString();
+        var allTasks = getAllTasks();
+        var doneToday = 0;
+
+        for (var i = 0; i < allTasks.length; i++) {
+            var task = allTasks[i];
+            var done = completedTasks[today] && completedTasks[today].indexOf(task.id) >= 0;
+            if (done) doneToday++;
+
+            var card = document.createElement('div');
+            card.className = 'task-card ' + (done ? 'completed' : '');
+            var deleteHtml = '<button class="task-delete" data-task-id="' + task.id + '">🗑️ Sil</button>';
+            card.innerHTML =
+                '<div class="task-icon">' + task.icon + '</div>' +
+                '<div class="task-content">' +
+                    '<div class="task-title">' + escapeHtml(task.text) + '</div>' +
+                    '<div class="task-desc">' + escapeHtml(task.desc) + '</div>' +
+                    deleteHtml +
+                '</div>' +
+                '<div class="task-check">' + (done ? '✓' : '') + '</div>';
+
+            (function(idx) {
+                addTap(card, function() { toggleTask(idx); });
+            })(i);
+
+            var deleteBtn = card.querySelector('.task-delete');
+            if (deleteBtn) {
+                (function(taskId, btn) {
+                    addTap(btn, function(ev) {
+                        if (ev) {
+                            ev.preventDefault();
+                            ev.stopPropagation();
+                        }
+                        deleteTask(taskId);
+                    });
+                })(task.id, deleteBtn);
+            }
+
+            container.appendChild(card);
+        }
+
+        if (doneToday > 0 && lastTaskDate !== today) {
+            var lt = lastTaskDate ? new Date(lastTaskDate) : null;
+            var t = new Date();
+            var y = new Date(t);
+            y.setDate(y.getDate() - 1);
+            if (lt && lt.toDateString() === y.toDateString()) taskStreak++;
+            else taskStreak = 1;
+            lastTaskDate = today;
+            saveData('lastTaskDate', lastTaskDate);
+            saveData('taskStreak', taskStreak);
+        }
+
+        document.getElementById('taskStreak').textContent = '🔥 ' + taskStreak + ' gün';
+        updateTaskStats(doneToday, allTasks.length);
+    }
+
+    function toggleTask(idx) {
+        var allTasks = getAllTasks();
+        var task = allTasks[idx];
+        if (!task) return;
+        var today = new Date().toDateString();
+        if (!completedTasks[today]) completedTasks[today] = [];
+        var pos = completedTasks[today].indexOf(task.id);
+        if (pos >= 0) completedTasks[today].splice(pos, 1);
+        else {
+            completedTasks[today].push(task.id);
+            showNotification('✨ Görev tamamlandı!');
+        }
+        saveData('completedTasks', completedTasks);
+        renderTasks();
+    }
+
+    function toggleTaskForm(forceClose) {
+        var form = document.getElementById('taskForm');
+        if (!form) return;
+        if (forceClose) form.classList.remove('open');
+        else form.classList.toggle('open');
+    }
+
+    function resetTaskInputs() {
+        var title = document.getElementById('taskTitleInput');
+        var desc = document.getElementById('taskDescInput');
+        var icon = document.getElementById('taskIconInput');
+        if (title) title.value = '';
+        if (desc) desc.value = '';
+        if (icon) icon.value = '✨';
+    }
+
+    function saveCustomTask() {
+        var title = document.getElementById('taskTitleInput');
+        var desc = document.getElementById('taskDescInput');
+        var icon = document.getElementById('taskIconInput');
+        var taskTitle = title ? title.value.trim() : '';
+        var taskDesc = desc ? desc.value.trim() : '';
+        var taskIcon = icon ? icon.value : '✨';
+        if (!taskTitle) {
+            showNotification('Görev başlığı yazmalısın');
+            return;
+        }
+        customTasks.unshift({
+            id: 'custom-' + Date.now(),
+            text: taskTitle,
+            desc: taskDesc || 'Kendi eklediğin mini hedef.',
+            icon: taskIcon
+        });
+        saveData('customTasks', customTasks);
+        resetTaskInputs();
+        toggleTaskForm(true);
+        renderTasks();
+        showNotification('➕ Yeni görev eklendi');
+    }
+
+    function deleteTask(taskId) {
+        if (taskId.indexOf('custom-') === 0) {
+            customTasks = customTasks.filter(function(task) { return task.id !== taskId; });
+            saveData('customTasks', customTasks);
+        } else if (hiddenBaseTasks.indexOf(taskId) === -1) {
+            hiddenBaseTasks.push(taskId);
+            saveData('hiddenBaseTasks', hiddenBaseTasks);
+        }
+        for (var day in completedTasks) {
+            if (!Object.prototype.hasOwnProperty.call(completedTasks, day) || !Array.isArray(completedTasks[day])) continue;
+            completedTasks[day] = completedTasks[day].filter(function(id) { return id !== taskId; });
+        }
+        saveData('completedTasks', completedTasks);
+        renderTasks();
+        showNotification('🗑️ Görev kaldırıldı');
+    }
+
+    function renderGallery() {
+        var container = document.getElementById('galleryContainer');
+        container.innerHTML = '';
+
+        for (var i = 0; i < galleryLabels.length; i++) {
+            var item = document.createElement('div');
+            item.className = 'gallery-item';
+            var has = !!photos[i];
+            if (has) item.classList.add('has-photo');
+
+            var html = '';
+            if (has) {
+                html += '<img src="' + photos[i] + '" alt="' + escapeHtml(galleryLabels[i]) + '">';
+                html += '<button class="delete-photo" data-photo-idx="' + i + '">✕</button>';
+            } else {
+                html += '<div class="placeholder">📸</div>';
+            }
+            html += '<div class="label">' + escapeHtml(galleryLabels[i]) + '</div>';
+            item.innerHTML = html;
+
+            (function(idx) {
+                addTap(item, function(e) {
+                    if (e && e.target && e.target.classList.contains('delete-photo')) return;
+                    pickPhoto(idx);
+                });
+            })(i);
+
+            var del = item.querySelector('.delete-photo');
+            if (del) {
+                (function(idx, btn) {
+                    btn.addEventListener('click', function(ev) {
+                        ev.stopPropagation();
+                        ev.preventDefault();
+                        delete photos[idx];
+                        saveData('photos', photos);
+                        renderGallery();
+                        showNotification('🗑️ Fotoğraf silindi');
+                    });
+                    btn.addEventListener('touchend', function(ev) { ev.stopPropagation(); });
+                })(i, del);
+            }
+
+            container.appendChild(item);
+        }
+    }
+
+    function pickPhoto(idx) {
+        currentPhotoIndex = idx;
+        var input = document.getElementById('photoInput');
+        if (!input) return;
+        input.value = '';
+        setTimeout(function() { input.click(); }, 100);
+    }
+
+    function handlePhotoSelect(e) {
+        var file = e.target.files && e.target.files[0];
+        if (!file || currentPhotoIndex < 0) return;
+        if (file.size > 5 * 1024 * 1024) {
+            showNotification('Fotoğraf çok büyük (max 5MB)');
+            return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+            compressImage(ev.target.result, function(compressed) {
+                photos[currentPhotoIndex] = compressed;
+                if (saveData('photos', photos)) {
+                    renderGallery();
+                    showNotification('📸 Fotoğraf eklendi!');
+                } else {
+                    showNotification('⚠️ Depolama dolu');
+                }
+            });
+        };
+        reader.onerror = function() { showNotification('❌ Fotoğraf okunamadı'); };
+        reader.readAsDataURL(file);
+    }
+
+    function compressImage(dataUrl, callback) {
+        var img = new Image();
+        img.onload = function() {
+            var canvas = document.createElement('canvas');
+            var maxSize = 800;
+            var w = img.width, h = img.height;
+            if (w > h && w > maxSize) { h = h * (maxSize / w); w = maxSize; }
+            else if (h > maxSize) { w = w * (maxSize / h); h = maxSize; }
+            canvas.width = Math.round(w);
+            canvas.height = Math.round(h);
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, Math.round(w), Math.round(h));
+            try { callback(canvas.toDataURL('image/jpeg', 0.8)); }
+            catch (e) { callback(dataUrl); }
+        };
+        img.onerror = function() { callback(dataUrl); };
+        img.src = dataUrl;
+    }
+
+    /* iOS Safari'de <a download> çalışmadığı için alternatif yöntem */
+    function exportData() {
+        var data = {
+            version: '2.0',
+            exportDate: new Date().toISOString(),
+            memories: customMemories,
+            diary: diaryEntries,
+            streak: currentStreak,
+            lastDiaryDate: lastDiaryDate,
+            completedTasks: completedTasks,
+            customTasks: customTasks,
+            taskStreak: taskStreak,
+            lastTaskDate: lastTaskDate,
+            photos: photos,
+            hiddenBaseTasks: hiddenBaseTasks,
+            profilePhoto: profilePhoto
+        };
+        try {
+            var json = JSON.stringify(data, null, 2);
+            var isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+            if (isIOS) {
+                /* iOS Safari: yeni sekmede aç, kullanıcı manuel kaydeder */
+                var dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(json);
+                var win = window.open(dataUri, '_blank');
+                if (!win) {
+                    /* Popup engellendiyse textarea göster */
+                    showIOSExportModal(json);
+                } else {
+                    showNotification('📤 Sayfayı kaydet: Paylaş > Dosyalara Kaydet');
+                }
+            } else {
+                var blob = new Blob([json], {type: 'application/json'});
+                var url = URL.createObjectURL(blob);
+                var a = document.createElement('a');
+                a.href = url;
+                a.download = 'askimiz-yedek-' + new Date().toISOString().slice(0,10) + '.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+                showNotification('📤 Yedek dışa aktarıldı!');
+            }
+        } catch (e) {
+            showNotification('❌ Dışa aktarma başarısız');
+        }
+    }
+
+    function showIOSExportModal(json) {
+        var existing = document.getElementById('iosExportModal');
+        if (existing) existing.parentNode.removeChild(existing);
+
+        var modal = document.createElement('div');
+        modal.id = 'iosExportModal';
+        modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+        modal.innerHTML =
+            '<div style="background:white;border-radius:20px;padding:20px;width:100%;max-width:400px;max-height:80vh;overflow:auto;">' +
+            '<div style="font-weight:800;color:#c2185b;margin-bottom:10px;font-size:1.1em;">📤 Yedeği Kopyala</div>' +
+            '<div style="font-size:0.85em;color:#666;margin-bottom:10px;">Aşağıdaki metni kopyalayıp bir yere yapıştırarak saklayabilirsin.</div>' +
+            '<textarea readonly style="width:100%;height:200px;border:2px solid #ff6b9d;border-radius:12px;padding:10px;font-size:13px;resize:none;">' + escapeHtml(json) + '</textarea>' +
+            '<button style="margin-top:12px;width:100%;background:linear-gradient(135deg,#e91e63,#ff6b9d);color:white;border:none;padding:14px;border-radius:14px;font-weight:700;font-size:1em;" id="iosExportClose">Kapat</button>' +
+            '</div>';
+        document.body.appendChild(modal);
+
+        var ta = modal.querySelector('textarea');
+        ta.addEventListener('touchstart', function() { ta.select(); }, { passive: true });
+        ta.select();
+
+        document.getElementById('iosExportClose').addEventListener('click', function() {
+            modal.parentNode.removeChild(modal);
+        });
+    }
+
+    function importData() {
+        var input = document.getElementById('importFileInput');
+        input.value = '';
+        setTimeout(function() { input.click(); }, 100);
+    }
+
+    function handleImportFile(e) {
+        var file = e.target.files && e.target.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+            try {
+                var data = JSON.parse(ev.target.result);
+                if (data.memories) { customMemories = data.memories; saveData('memories', customMemories); allMemories = defaultMemories.concat(customMemories); }
+                if (data.diary) { diaryEntries = data.diary; saveData('diary', diaryEntries); }
+                if (typeof data.streak === 'number') { currentStreak = data.streak; saveData('streak', currentStreak); }
+                if (data.lastDiaryDate) { lastDiaryDate = data.lastDiaryDate; saveData('lastDiaryDate', lastDiaryDate); }
+                if (data.completedTasks) { completedTasks = data.completedTasks; saveData('completedTasks', completedTasks); }
+                if (data.customTasks) { customTasks = data.customTasks; saveData('customTasks', customTasks); }
+                if (data.hiddenBaseTasks) { hiddenBaseTasks = data.hiddenBaseTasks; saveData('hiddenBaseTasks', hiddenBaseTasks); }
+                if (typeof data.taskStreak === 'number') { taskStreak = data.taskStreak; saveData('taskStreak', taskStreak); }
+                if (data.lastTaskDate) { lastTaskDate = data.lastTaskDate; saveData('lastTaskDate', lastTaskDate); }
+                if (data.photos) { photos = data.photos; saveData('photos', photos); }
+                if (data.profilePhoto !== undefined) { profilePhoto = data.profilePhoto; saveData('profilePhoto', profilePhoto); }
+                migrateCompletedTasks();
+                renderMemories(); renderDiaryAccess(); renderDiary(); updateStreakBadge(); renderTasks(); renderGallery(); renderProfilePhoto();
+                showNotification('📥 Yedek içe aktarıldı!');
+            } catch (err) {
+                showNotification('❌ Geçersiz yedek dosyası');
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    function showPage(page, el) {
+        var pages = document.querySelectorAll('.page');
+        for (var i = 0; i < pages.length; i++) pages[i].classList.remove('active');
+        var navs = document.querySelectorAll('.nav-item');
+        for (var j = 0; j < navs.length; j++) navs[j].classList.remove('active');
+        var pe = document.getElementById('page-' + page);
+        if (pe) pe.classList.add('active');
+        if (el) el.classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    function showSurprise() {
+        var s = surprises[Math.floor(Math.random() * surprises.length)];
+        showNotification(s);
+        createConfetti();
+    }
+
+    function createConfetti() {
+        var symbols = ['💖','💕','💗','💝','💘','🌸','✨','⭐','🌹','🎀'];
+        for (var i = 0; i < 30; i++) {
+            (function() {
+                var c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.animationDelay = Math.random() * 2 + 's';
+                c.style.animationDuration = (2 + Math.random() * 2) + 's';
+                c.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+                c.style.fontSize = (15 + Math.random() * 20) + 'px';
+                document.body.appendChild(c);
+                setTimeout(function() {
+                    if (c.parentNode) c.parentNode.removeChild(c);
+                }, 4000);
+            })();
+        }
+    }
+
+    function createParticles() {
+        var container = document.getElementById('particles');
+        var symbols = ['💕','💖','💗','💝','🌸','✨','⭐','🌹'];
+        for (var i = 0; i < 10; i++) {
+            var p = document.createElement('div');
+            p.className = 'particle';
+            p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 15 + 's';
+            p.style.animationDuration = (10 + Math.random() * 10) + 's';
+            container.appendChild(p);
+        }
+    }
+
+    function initEvents() {
+        var navs = document.querySelectorAll('.nav-item');
+        for (var i = 0; i < navs.length; i++) {
+            (function(item) {
+                addTap(item, function() {
+                    showPage(item.getAttribute('data-page'), item);
+                });
+            })(navs[i]);
+        }
+
+        addTap(document.getElementById('surpriseBtn'), showSurprise);
+        addTap(document.getElementById('addMemoryBtn'), toggleMemoryInput);
+        addTap(document.getElementById('saveMemoryBtn'), saveMemory);
+        addTap(document.getElementById('cancelMemoryBtn'), function() {
+            document.getElementById('memoryDateInput').value = '';
+            document.getElementById('memoryTextInput').value = '';
+            toggleMemoryInput();
+        });
+        addTap(document.getElementById('saveDiaryBtn'), saveDiary);
+        addTap(document.getElementById('unlockDiaryBtn'), unlockDiary);
+        addTap(document.getElementById('lockDiaryBtn'), lockDiary);
+        addTap(document.getElementById('toggleTaskFormBtn'), function() { toggleTaskForm(false); });
+        addTap(document.getElementById('saveTaskBtn'), saveCustomTask);
+        addTap(document.getElementById('cancelTaskBtn'), function() {
+            resetTaskInputs();
+            toggleTaskForm(true);
+        });
+        addTap(document.getElementById('exportBtn'), exportData);
+        addTap(document.getElementById('importBtn'), importData);
+        addTap(document.getElementById('profileAvatar'), pickProfilePhoto);
+        addTap(document.getElementById('changeProfilePhotoBtn'), pickProfilePhoto);
+        addTap(document.getElementById('removeProfilePhotoBtn'), removeProfilePhoto);
+
+        document.getElementById('photoInput').addEventListener('change', handlePhotoSelect);
+        document.getElementById('profilePhotoInput').addEventListener('change', handleProfilePhotoSelect);
+        document.getElementById('importFileInput').addEventListener('change', handleImportFile);
+        document.getElementById('diarySearchInput').addEventListener('input', renderDiary);
+        document.getElementById('diaryPasswordInput').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') unlockDiary();
+        });
+
+        /* iOS klavye açıldığında nav gizle */
+        document.addEventListener('focusin', function(e) {
+            var tag = e.target && e.target.tagName;
+            if (tag === 'INPUT' || tag === 'TEXTAREA') {
+                document.body.classList.add('keyboard-open');
+            }
+        });
+        document.addEventListener('focusout', function() {
+            setTimeout(function() {
+                var a = document.activeElement;
+                var tag = a && a.tagName;
+                if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
+                    document.body.classList.remove('keyboard-open');
+                }
+            }, 150);
+        });
+
+        /* Çift dokunma zoom'u engelle (input ve textarea hariç) */
+        var lastTouchEnd = 0;
+        document.addEventListener('touchend', function(e) {
+            var now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                var tag = e.target && e.target.tagName;
+                if (tag !== 'INPUT' && tag !== 'TEXTAREA') {
+                    e.preventDefault();
+                }
+            }
+            lastTouchEnd = now;
+        }, { passive: false });
+    }
+
+    function init() {
+        try {
+            updateCounter();
+            setDailyMessage();
+            setLoveMeter();
+            renderWeeks();
+            renderMemories();
+            migrateCompletedTasks();
+            setMoodPicker();
+            renderDiaryAccess();
+            renderDiary();
+            updateStreakBadge();
+            renderTasks();
+            renderGallery();
+            renderProfilePhoto();
+            createParticles();
+            initEvents();
+            setInterval(updateCounter, 1000);
+        } catch (e) {
+            console.error('Init error:', e);
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) updateCounter();
+    });
+})();
+</script>
+
+<script>
+(function() {
+    var banner = document.getElementById('installBanner');
+    var installBtn = document.getElementById('installAppBtn');
+    var dismissBtn = document.getElementById('dismissInstallBannerBtn');
+    var titleEl = document.getElementById('installBannerTitle');
+    var textEl = document.getElementById('installBannerText');
+    if (!banner || !installBtn || !dismissBtn || !titleEl || !textEl) return;
+
+    var deferredPrompt = null;
+    var isIOS = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+    var isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+    var isDismissed = false;
+    try { isDismissed = localStorage.getItem('askimiz_install_banner_dismissed') === '1'; } catch(e) {}
+
+    function setBanner(mode) {
+        if (isStandalone || isDismissed) return;
+        if (mode === 'ios') {
+            titleEl.textContent = 'iPhone ana ekranına ekle';
+            textEl.innerHTML = 'Safari\'de alttaki <strong>Paylaş</strong> butonuna dokun, sonra <strong>Ana Ekrana Ekle</strong> seç.';
+            installBtn.textContent = 'Nasıl yapılır?';
+        } else if (mode === 'desktop') {
+            titleEl.textContent = 'Masaüstüne uygulama olarak yükle';
+            textEl.textContent = 'Tarayıcının yükleme penceresiyle bu uygulamayı masaüstüne ekleyebilirsin.';
+            installBtn.textContent = 'Yükle';
+        } else {
+            titleEl.textContent = 'Uygulamayı yükle';
+            textEl.textContent = 'Bu uygulamayı cihazına uygulama gibi ekleyebilirsin.';
+            installBtn.textContent = 'Yükle';
+        }
+        banner.classList.add('show');
+    }
+
+    function hideBanner(remember) {
+        banner.classList.remove('show');
+        if (remember) {
+            try { localStorage.setItem('askimiz_install_banner_dismissed', '1'); } catch(e) {}
+        }
+    }
+
+    if (isStandalone) {
+        document.body.classList.add('standalone');
+    }
+
+    dismissBtn.addEventListener('click', function() { hideBanner(true); });
+
+    /* async/await kaldırıldı - iOS 10 uyumluluğu için */
+    installBtn.addEventListener('click', function() {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then(function() {
+                deferredPrompt = null;
+                hideBanner(true);
+            }).catch(function() {
+                deferredPrompt = null;
+            });
+            return;
+        }
+        if (isIOS) {
+            titleEl.textContent = 'Safari > Paylaş > Ana Ekrana Ekle';
+            textEl.innerHTML = 'Safari içinde alttaki <strong>Paylaş</strong> butonuna dokun, sonra <strong>Ana Ekrana Ekle</strong> seç.';
+            banner.classList.add('show');
+            return;
+        }
+        textEl.textContent = 'Tarayıcı menüsündeki uygulama yükleme seçeneğini kullanabilirsin.';
+        banner.classList.add('show');
+    });
+
+    window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        setBanner('desktop
+');
+    });
+
+    window.addEventListener('appinstalled', function() {
+        hideBanner(true);
+        document.body.classList.add('standalone');
+    });
+
+    if (!isStandalone && isIOS) {
+        setTimeout(function() { setBanner('ios'); }, 1200);
+    }
+
+    /* Service Worker kaydı - HTTPS veya localhost'ta çalışır */
+    if ('serviceWorker' in navigator) {
+        var swUrl = './service-worker.js';
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register(swUrl, { scope: './' }).then(function(reg) {
+                /* Güncelleme kontrolü */
+                reg.addEventListener('updatefound', function() {
+                    var newWorker = reg.installing;
+                    if (newWorker) {
+                        newWorker.addEventListener('statechange', function() {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                /* Yeni sürüm mevcut, sessizce güncelle */
+                                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                            }
+                        });
+                    }
+                });
+            }).catch(function(err) {
+                console.warn('Service worker kaydı yapılamadı:', err);
+            });
+        });
+
+        /* Yeni SW aktif olduğunda sayfayı yenile */
+        var refreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', function() {
+            if (!refreshing) {
+                refreshing = true;
+                window.location.reload();
+            }
+        });
+    }
+})();
+</script>
+
+</body>
+</html>
