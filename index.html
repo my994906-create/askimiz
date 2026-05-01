@@ -1043,6 +1043,10 @@ body.standalone .install-banner { display: none !important; }
     var galleryLabels = ["İlk Buluşma", "İlk Selfie", "İlk Yolculuk", "İlk Yemek", "İlk Hediye", "İlk Dans"];
 
     var customMemories = loadData('memories', []);
+    var savedDefaultMemories = loadData('defaultMemories', null);
+    if (savedDefaultMemories !== null) {
+        defaultMemories = savedDefaultMemories;
+    }
     var allMemories = defaultMemories.concat(customMemories);
     var diaryEntries = loadData('diary', []);
     var currentStreak = loadData('streak', 0);
@@ -1302,6 +1306,7 @@ body.standalone .install-banner { display: none !important; }
                         saveData('memories', customMemories);
                     } else {
                         defaultMemories.splice(idx, 1);
+                        saveData('defaultMemories', defaultMemories);
                     }
                     allMemories = defaultMemories.concat(customMemories);
                     renderMemories();
