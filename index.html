@@ -774,7 +774,7 @@ body.standalone .install-banner { display: none !important; }
         <div class="progress-header"><span>52 Haftalık Yolculuk</span><span id="progressText">0/52</span></div>
         <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
     </div>
-    <button class="surprise-btn" id="surpriseBtn">🎁 Bana Sürpriz Yap!</button>
+    <!-- Sürpriz butonu kaldırıldı -->
     <div class="section-header"><span class="section-title">Haftalık Notlar</span><span class="section-badge" id="unlockedBadge">0 Açık</span></div>
     <div id="weeksContainer"></div>
 </div>
@@ -853,8 +853,24 @@ body.standalone .install-banner { display: none !important; }
 </div>
 
 <div class="page" id="page-gallery">
-    <div class="section-header"><span class="section-title">Fotoğraf Albümü</span></div>
-    <div class="backup-section">
+    <div class="section-header">
+        <span class="section-title" id="galleryTitle">Fotoğraf Albümleri</span>
+        <button class="add-memory-btn" id="addAlbumBtn" style="margin-bottom:0; padding:8px 15px; font-size:0.85em;">➕ Yeni Albüm</button>
+    </div>
+    
+    <div id="albumView">
+        <div class="gallery-grid" id="albumsContainer"></div>
+    </div>
+
+    <div id="photoView" style="display:none;">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:15px;">
+            <button class="diary-mini-btn" id="backToAlbumsBtn">⬅ Geri</button>
+            <button class="add-memory-btn" id="addPhotoBtn" style="margin-bottom:0; flex:1;">📸 Fotoğraf Ekle</button>
+        </div>
+        <div class="gallery-grid" id="photosContainer"></div>
+    </div>
+
+    <div class="backup-section" style="margin-top:30px;">
         <div class="backup-title">📦 Verilerini Yedekle</div>
         <div class="backup-buttons">
             <button class="backup-btn" id="exportBtn">📤 Dışa Aktar</button>
@@ -862,7 +878,6 @@ body.standalone .install-banner { display: none !important; }
         </div>
         <input type="file" id="importFileInput" accept=".json" style="display:none">
     </div>
-    <div class="gallery-grid" id="galleryContainer"></div>
     <input type="file" id="photoInput" accept="image/*" style="display:none">
     <input type="file" id="profilePhotoInput" accept="image/*" style="display:none">
 </div>
@@ -1040,7 +1055,13 @@ body.standalone .install-banner { display: none !important; }
         {id: 'base-17', text: "Erken uyumayı hedefle", icon: "🌙", desc: "Bugün kendine iyi bir uyku hediye et."}
     ];
 
-    var galleryLabels = ["İlk Buluşma", "İlk Selfie", "İlk Yolculuk", "İlk Yemek", "İlk Hediye", "İlk Dans"];
+    var albums = loadData('albums', [
+        { id: 'album-1', name: 'İlklerimiz', icon: '✨' },
+        { id: 'album-2', name: 'Gezilerimiz', icon: '🚗' },
+        { id: 'album-3', name: 'En Sevdiklerim', icon: '💖' }
+    ]);
+    var photosByAlbum = loadData('photosByAlbum', {});
+    var currentAlbumId = null;
 
     var customMemories = loadData('memories', []);
     var savedDefaultMemories = loadData('defaultMemories', null);
@@ -1679,50 +1700,107 @@ body.standalone .install-banner { display: none !important; }
         showNotification('🗑️ Görev kaldırıldı');
     }
 
-    function renderGallery() {
-        var container = document.getElementById('galleryContainer');
+    function renderAlbums() {
+        var container = document.getElementById('albumsContainer');
+        if (!container) return;
         container.innerHTML = '';
+        document.getElementById('albumView').style.display = 'block';
+        document.getElementById('photoView').style.display = 'none';
+        document.getElementById('galleryTitle').textContent = 'Fotoğraf Albümleri';
+        document.getElementById('addAlbumBtn').style.display = 'block';
 
-        for (var i = 0; i < galleryLabels.length; i++) {
-            var item = document.createElement('div');
-            item.className = 'gallery-item';
-            var has = !!photos[i];
-            if (has) item.classList.add('has-photo');
+        for (var i = 0; i < albums.length; i++) {
+            (function(album) {
+                var item = document.createElement('div');
+                item.className = 'gallery-item';
+                var albumPhotos = photosByAlbum[album.id] || [];
+                var coverPhoto = albumPhotos.length > 0 ? albumPhotos[0] : null;
+                
+                if (coverPhoto) {
+                    item.classList.add('has-photo');
+                    item.innerHTML = '<img src="' + coverPhoto + '" alt="' + escapeHtml(album.name) + '">';
+                } else {
+                    item.innerHTML = '<div class="placeholder">' + album.icon + '</div>';
+                }
+                
+                item.innerHTML += '<div class="label">' + escapeHtml(album.name) + ' (' + albumPhotos.length + ')</div>';
+                item.innerHTML += '<button class="delete-photo" style="background:rgba(0,0,0,0.5); color:white;">✕</button>';
 
-            var html = '';
-            if (has) {
-                html += '<img src="' + photos[i] + '" alt="' + escapeHtml(galleryLabels[i]) + '">';
-                html += '<button class="delete-photo" data-photo-idx="' + i + '">✕</button>';
-            } else {
-                html += '<div class="placeholder">📸</div>';
-            }
-            html += '<div class="label">' + escapeHtml(galleryLabels[i]) + '</div>';
-            item.innerHTML = html;
-
-            (function(idx) {
                 addTap(item, function(e) {
-                    if (e && e.target && e.target.classList.contains('delete-photo')) return;
-                    pickPhoto(idx);
+                    if (e && e.target && e.target.classList.contains('delete-photo')) {
+                        deleteAlbum(album.id);
+                    } else {
+                        openAlbum(album.id);
+                    }
                 });
-            })(i);
-
-            var del = item.querySelector('.delete-photo');
-            if (del) {
-                (function(idx, btn) {
-                    btn.addEventListener('click', function(ev) {
-                        ev.stopPropagation();
-                        ev.preventDefault();
-                        delete photos[idx];
-                        saveData('photos', photos);
-                        renderGallery();
-                        showNotification('🗑️ Fotoğraf silindi');
-                    });
-                    btn.addEventListener('touchend', function(ev) { ev.stopPropagation(); });
-                })(i, del);
-            }
-
-            container.appendChild(item);
+                container.appendChild(item);
+            })(albums[i]);
         }
+    }
+
+    function openAlbum(albumId) {
+        currentAlbumId = albumId;
+        renderPhotos();
+    }
+
+    function renderPhotos() {
+        var container = document.getElementById('photosContainer');
+        if (!container) return;
+        container.innerHTML = '';
+        document.getElementById('albumView').style.display = 'none';
+        document.getElementById('photoView').style.display = 'block';
+        document.getElementById('addAlbumBtn').style.display = 'none';
+        
+        var album = albums.find(function(a) { return a.id === currentAlbumId; });
+        document.getElementById('galleryTitle').textContent = album ? album.name : 'Fotoğraflar';
+
+        var albumPhotos = photosByAlbum[currentAlbumId] || [];
+        for (var i = 0; i < albumPhotos.length; i++) {
+            (function(photo, idx) {
+                var item = document.createElement('div');
+                item.className = 'gallery-item has-photo';
+                item.innerHTML = '<img src="' + photo + '" alt="Fotoğraf">';
+                item.innerHTML += '<button class="delete-photo">✕</button>';
+                
+                var del = item.querySelector('.delete-photo');
+                addTap(del, function(e) {
+                    if (e) e.stopPropagation();
+                    deletePhoto(idx);
+                });
+                
+                container.appendChild(item);
+            })(albumPhotos[i], i);
+        }
+    }
+
+    function addAlbum() {
+        var name = prompt('Albüm adı girin:');
+        if (!name) return;
+        var id = 'album-' + Date.now();
+        albums.push({ id: id, name: name, icon: '📂' });
+        saveData('albums', albums);
+        renderAlbums();
+        showNotification('📂 Albüm oluşturuldu');
+    }
+
+    function deleteAlbum(id) {
+        if (!confirm('Bu albümü ve içindeki tüm fotoğrafları silmek istediğine emin misin?')) return;
+        albums = albums.filter(function(a) { return a.id !== id; });
+        delete photosByAlbum[id];
+        saveData('albums', albums);
+        saveData('photosByAlbum', photosByAlbum);
+        renderAlbums();
+        showNotification('🗑️ Albüm silindi');
+    }
+
+    function deletePhoto(idx) {
+        if (!confirm('Bu fotoğrafı silmek istediğine emin misin?')) return;
+        var albumPhotos = photosByAlbum[currentAlbumId] || [];
+        albumPhotos.splice(idx, 1);
+        photosByAlbum[currentAlbumId] = albumPhotos;
+        saveData('photosByAlbum', photosByAlbum);
+        renderPhotos();
+        showNotification('🗑️ Fotoğraf silindi');
     }
 
     function pickPhoto(idx) {
@@ -1735,7 +1813,7 @@ body.standalone .install-banner { display: none !important; }
 
     function handlePhotoSelect(e) {
         var file = e.target.files && e.target.files[0];
-        if (!file || currentPhotoIndex < 0) return;
+        if (!file || !currentAlbumId) return;
         if (file.size > 5 * 1024 * 1024) {
             showNotification('Fotoğraf çok büyük (max 5MB)');
             return;
@@ -1743,9 +1821,10 @@ body.standalone .install-banner { display: none !important; }
         var reader = new FileReader();
         reader.onload = function(ev) {
             compressImage(ev.target.result, function(compressed) {
-                photos[currentPhotoIndex] = compressed;
-                if (saveData('photos', photos)) {
-                    renderGallery();
+                if (!photosByAlbum[currentAlbumId]) photosByAlbum[currentAlbumId] = [];
+                photosByAlbum[currentAlbumId].push(compressed);
+                if (saveData('photosByAlbum', photosByAlbum)) {
+                    renderPhotos();
                     showNotification('📸 Fotoğraf eklendi!');
                 } else {
                     showNotification('⚠️ Depolama dolu');
@@ -1789,6 +1868,8 @@ body.standalone .install-banner { display: none !important; }
             taskStreak: taskStreak,
             lastTaskDate: lastTaskDate,
             photos: photos,
+            albums: albums,
+            photosByAlbum: photosByAlbum,
             hiddenBaseTasks: hiddenBaseTasks,
             profilePhoto: profilePhoto
         };
@@ -1870,9 +1951,11 @@ body.standalone .install-banner { display: none !important; }
                 if (typeof data.taskStreak === 'number') { taskStreak = data.taskStreak; saveData('taskStreak', taskStreak); }
                 if (data.lastTaskDate) { lastTaskDate = data.lastTaskDate; saveData('lastTaskDate', lastTaskDate); }
                 if (data.photos) { photos = data.photos; saveData('photos', photos); }
+                if (data.albums) { albums = data.albums; saveData('albums', albums); }
+                if (data.photosByAlbum) { photosByAlbum = data.photosByAlbum; saveData('photosByAlbum', photosByAlbum); }
                 if (data.profilePhoto !== undefined) { profilePhoto = data.profilePhoto; saveData('profilePhoto', profilePhoto); }
                 migrateCompletedTasks();
-                renderMemories(); renderDiaryAccess(); renderDiary(); updateStreakBadge(); renderTasks(); renderGallery(); renderProfilePhoto();
+                renderMemories(); renderDiaryAccess(); renderDiary(); updateStreakBadge(); renderTasks(); renderAlbums(); renderProfilePhoto();
                 showNotification('📥 Yedek içe aktarıldı!');
             } catch (err) {
                 showNotification('❌ Geçersiz yedek dosyası');
@@ -1941,7 +2024,14 @@ body.standalone .install-banner { display: none !important; }
             })(navs[i]);
         }
 
-        addTap(document.getElementById('surpriseBtn'), showSurprise);
+        var sBtn = document.getElementById('surpriseBtn');
+        if (sBtn) addTap(sBtn, showSurprise);
+        addTap(document.getElementById('addAlbumBtn'), addAlbum);
+        addTap(document.getElementById('backToAlbumsBtn'), renderAlbums);
+        addTap(document.getElementById('addPhotoBtn'), function() {
+            var input = document.getElementById('photoInput');
+            if (input) input.click();
+        });
         addTap(document.getElementById('addMemoryBtn'), toggleMemoryInput);
         addTap(document.getElementById('saveMemoryBtn'), saveMemory);
         addTap(document.getElementById('cancelMemoryBtn'), function() {
@@ -2016,7 +2106,7 @@ body.standalone .install-banner { display: none !important; }
             renderDiary();
             updateStreakBadge();
             renderTasks();
-            renderGallery();
+            renderAlbums();
             renderProfilePhoto();
             createParticles();
             initEvents();

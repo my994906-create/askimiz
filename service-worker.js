@@ -1,5 +1,5 @@
 /* Aşkımız PWA - Service Worker v3 (Zorunlu Güncelleme) */
-var CACHE_NAME = 'askimiz-pwa-v3';
+var CACHE_NAME = 'askimiz-pwa-v4';
 var APP_SHELL = [
   './',
   './index.html',
